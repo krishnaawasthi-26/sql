@@ -1,0 +1,875 @@
+
+
+### SQL Command #15: `MERGE`
+
+The `MERGE` command (also known as `UPSERT` in some contexts) combines `INSERT`, `UPDATE`, and sometimes `DELETE` operations into a single statement. It’s used to synchronize a target table with a source table or data set, adding new rows, updating existing ones, or deleting unmatched ones based on a condition. It’s part of Data Manipulation Language (DML).
+
+#### Syntax:
+```sql
+MERGE INTO target_table [AS alias]
+USING source_table_or_query [AS alias]
+ON (condition)
+WHEN MATCHED THEN
+    UPDATE SET column1 = value1, ...
+WHEN NOT MATCHED THEN
+    INSERT (column1, column2, ...) VALUES (value1, value2, ...);
+```
+
+- **`target_table`**: The table to modify.
+- **`source_table_or_query`**: The data source to compare against.
+- **`ON (condition)`**: The join condition to match rows.
+- **`WHEN MATCHED`**: Action if rows match.
+- **`WHEN NOT MATCHED`**: Action if no match exists.
+
+#### Key Points:
+1. **Purpose**: Efficiently updates or inserts data in one pass.
+2. **Support**: Standard in SQL Server, Oracle; PostgreSQL uses `INSERT ... ON CONFLICT` instead; MySQL lacks native `MERGE`.
+3. **Flexibility**: Can include `DELETE` clauses in some systems.
+
+---
+
+### Example and Explanation
+**Scenario**: Sync an `employees` table with a `new_employees` staging table.
+
+1. **Setup Tables**:
+   ```sql
+   CREATE TABLE employees (
+       employee_id INT PRIMARY KEY,
+       name VARCHAR(100),
+       salary DECIMAL(10,2)
+   );
+
+   CREATE TABLE new_employees (
+       employee_id INT,
+       name VARCHAR(100),
+       salary DECIMAL(10,2)
+   );
+
+   INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000);
+   INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+   ```
+
+2. **MERGE Command (SQL Server)**:
+   ```sql
+   MERGE INTO employees AS e
+   USING new_employees AS ne
+   ON (e.employee_id = ne.employee_id)
+   WHEN MATCHED THEN
+       UPDATE SET e.name = ne.name, e.salary = ne.salary
+   WHEN NOT MATCHED THEN
+       INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+   ```
+
+   - **Explanation**: 
+     - **Target**: `employees` (aliased as `e`).
+     - **Source**: `new_employees` (aliased as `ne`).
+     - **Condition**: Matches rows by `employee_id`.
+     - **When Matched**: Updates `name` and `salary` for `employee_id = 2` (Bob becomes "Bob Updated", salary to 65000).
+     - **When Not Matched**: Inserts new row for `employee_id = 3` (Carol).
+   - **Result**: 
+     ```sql
+     SELECT * FROM employees;
+     ```
+     ```
+     employee_id | name         | salary
+     ------------+--------------+--------
+     1           | Alice        | 50000.00
+     2           | Bob Updated  | 65000.00
+     3           | Carol        | 55000.00
+     ```
+
+---
+
+### Notes:
+- **PostgreSQL Alternative**:
+  ```sql
+  INSERT INTO employees (employee_id, name, salary)
+  SELECT employee_id, name, salary FROM new_employees
+  ON CONFLICT (employee_id)
+  DO UPDATE SET name = EXCLUDED.name, salary = EXCLUDED.salary;
+  ```
+- **Performance**: Faster than separate `UPDATE` and `INSERT` queries for bulk operations.
+- **Limitations**: Not all databases support it natively (e.g., MySQL requires workarounds).
+
+--------------------------------------------------------------------------------------
+some keywords used 
+
+Got it! You’ve asked for the meanings of specific "small" keywords in the `MERGE` command—like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`—along with their uses and examples, all in one prompt. I’ll focus on these keywords, explain their roles within `MERGE`, and provide a single cohesive example to illustrate them all together. I’ll keep it concise but clear, covering each keyword’s meaning and usage in the context of `MERGE`.
+
+---
+
+### Meanings and Uses of Keywords in `MERGE`
+
+Here’s the full `MERGE` statement we’ll use as a reference:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+
+#### 1. **`AS`**
+- **Meaning**: Assigns a temporary alias (nickname) to a table or query result for use within the statement.
+- **Use**: Simplifies referencing tables or sources in the `MERGE` clauses, avoiding repeated full names or ambiguity when column names overlap.
+- **Where**: Appears in `MERGE INTO target_table AS alias` and `USING source AS alias`.
+- **Example Role**: In `AS e` and `AS ne`, `e` aliases `employees`, and `ne` aliases `new_employees`, making `e.name` and `ne.name` easier to write than `employees.name` and `new_employees.name`.
+
+#### 2. **`ON`**
+- **Meaning**: Specifies the condition that determines how rows in the target table match rows in the source.
+- **Use**: Defines the join or matching logic (like a `JOIN` condition) to decide which rows are "matched" or "not matched."
+- **Where**: Follows `USING`, as in `ON (condition)`.
+- **Example Role**: `ON (e.employee_id = ne.employee_id)` matches rows where `employee_id` is the same in both tables, determining whether to update or insert.
+
+#### 3. **`WHEN MATCHED`**
+- **Meaning**: Introduces a condition where the target and source rows match based on the `ON` clause.
+- **Use**: Specifies what to do (e.g., update or delete) when a row in the target table has a corresponding row in the source.
+- **Where**: Appears before an action clause like `UPDATE` or `DELETE`.
+- **Example Role**: `WHEN MATCHED` triggers an update for rows where `employee_id` matches, updating existing employees.
+
+#### 4. **`THEN`**
+- **Meaning**: Indicates the action to take after a `WHEN` condition is met (e.g., `MATCHED` or `NOT MATCHED`).
+- **Use**: Pairs with `WHEN` to define the operation (`UPDATE`, `INSERT`, `DELETE`) to execute.
+- **Where**: Follows `WHEN MATCHED` or `WHEN NOT MATCHED`, before the action.
+- **Example Role**: `THEN` after `WHEN MATCHED` leads to `UPDATE`, and after `WHEN NOT MATCHED` leads to `INSERT`, linking condition to action.
+
+#### 5. **`SET`**
+- **Meaning**: Assigns new values to columns in the target table during an `UPDATE` operation.
+- **Use**: Updates specific columns with values from the source or a calculation when a match occurs.
+- **Where**: Part of the `UPDATE` action in `WHEN MATCHED THEN UPDATE SET`.
+- **Example Role**: `SET e.name = ne.name, e.salary = ne.salary` updates the `name` and `salary` columns in `employees` with values from `new_employees`.
+
+---
+
+### Single Example with All Keywords
+
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE new_employees (
+    employee_id INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000);
+INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+```
+
+**MERGE Statement**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+
+#### Explanation with Keywords:
+1. **`AS`**:
+   - `AS e` aliases `employees` as `e`.
+   - `AS ne` aliases `new_employees` as `ne`.
+   - **Use**: Allows `e.employee_id` and `ne.name` instead of full table names, keeping it clean.
+
+2. **`ON`**:
+   - `ON (e.employee_id = ne.employee_id)` matches rows by `employee_id`.
+   - **Use**: Identifies that `employee_id = 2` exists in both tables (matched), while `3` is only in `new_employees` (not matched).
+
+3. **`WHEN MATCHED`**:
+   - `WHEN MATCHED` applies to `employee_id = 2` (Bob), where a match is found.
+   - **Use**: Triggers an update for matched rows.
+
+4. **`THEN`**:
+   - `THEN` after `WHEN MATCHED` leads to `UPDATE`.
+   - `THEN` after `WHEN NOT MATCHED` leads to `INSERT`.
+   - **Use**: Directs the database to perform the specified action (update for Bob, insert for Carol).
+
+5. **`SET`**:
+   - `SET e.name = ne.name, e.salary = ne.salary` updates `name` to "Bob Updated" and `salary` to 65000 for `employee_id = 2`.
+   - **Use**: Assigns new values from `new_employees` to `employees` for matched rows.
+
+#### Result:
+```sql
+SELECT * FROM employees;
+```
+```
+employee_id | name         | salary
+------------+--------------+--------
+1           | Alice        | 50000.00
+2           | Bob Updated  | 65000.00
+3           | Carol        | 55000.00
+```
+- **Outcome**: 
+  - `employee_id = 2` updated (matched).
+  - `employee_id = 3` inserted (not matched).
+  - `employee_id = 1` unchanged (not in source).
+
+---
+
+### Notes:
+- **Order**: Keywords follow a strict sequence: `MERGE INTO ... AS ... USING ... AS ... ON ... WHEN ... THEN ... SET`.
+- **Database Variations**: 
+  - SQL Server/Oracle use this syntax.
+  - PostgreSQL uses `INSERT ... ON CONFLICT` (no `MERGE`, so no `SET` in that form).
+  - MySQL lacks `MERGE`.
+
+------------------------------------------------------------------------------------------
+all clauses of the merge comman 
+It seems you want me to break down all the clauses of the `MERGE` command one by one, rather than proceeding to the next SQL command. That’s perfectly fine! I’ll focus on the `MERGE` command we just covered and explain each of its clauses individually with examples and explanations. The `MERGE` command’s structure includes several key clauses, and I’ll present them sequentially as they appear in the syntax, covering both mandatory and optional parts. Since `MERGE` syntax varies slightly by database (e.g., SQL Server, Oracle), I’ll use SQL Server’s standard implementation as the base, noting differences where relevant.
+
+Here’s the full `MERGE` syntax again for reference:
+```sql
+MERGE INTO target_table [AS alias]
+USING source_table_or_query [AS alias]
+ON (condition)
+WHEN MATCHED [AND condition] THEN
+    UPDATE SET column1 = value1, ...
+WHEN NOT MATCHED [BY TARGET] THEN
+    INSERT (column1, column2, ...) VALUES (value1, value2, ...)
+[WHEN NOT MATCHED BY SOURCE [AND condition] THEN
+    DELETE];
+```
+
+I’ll go through each clause one by one. Since you didn’t say "next" yet, I’ll start with the first clause now, and you can say "next" after each to move to the following one!
+
+---
+
+### Clause #1: `MERGE INTO target_table [AS alias]`
+
+#### Description:
+- **Purpose**: Specifies the target table that will be modified (updated, inserted into, or deleted from) by the `MERGE` operation.
+- **Mandatory**: Yes; every `MERGE` statement begins with this clause.
+- **Components**:
+  - `MERGE INTO`: The keyword initiating the command.
+  - `target_table`: The name of the table to modify.
+  - `[AS alias]`: Optional; assigns a shorthand alias to the target table for use in the statement.
+
+#### Key Points:
+1. **Target**: The table where changes (inserts, updates, deletes) will occur.
+2. **Alias**: Simplifies referencing the table later, especially in complex queries with joins.
+3. **Scope**: Must exist in the database before the `MERGE`.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000);
+```
+
+**MERGE with Clause**:
+```sql
+MERGE INTO employees AS e
+USING (SELECT 1 AS employee_id, 'Alice Updated' AS name, 55000 AS salary) AS src
+ON (e.employee_id = src.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = src.name, e.salary = src.salary;
+```
+
+- **Explanation**:
+  - **`MERGE INTO employees`**: Targets the `employees` table for modification.
+  - **`AS e`**: Aliases `employees` as `e`, making it easier to reference in the `ON` and `UPDATE` clauses.
+  - **Action**: Updates Alice’s `name` to "Alice Updated" and `salary` to 55000 because her `employee_id` matches.
+- **Result**:
+  ```sql
+  SELECT * FROM employees;
+  ```
+  ```
+  employee_id | name          | salary
+  ------------+---------------+--------
+  1           | Alice Updated | 55000.00
+  ```
+
+#### Without Alias:
+```sql
+MERGE INTO employees
+USING (SELECT 1 AS employee_id, 'Alice Updated' AS name, 55000 AS salary) AS src
+ON (employees.employee_id = src.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET employees.name = src.name, employees.salary = src.salary;
+```
+- Works the same, but `employees.` must be repeated, making it less concise.
+
+---
+
+### Notes:
+- **Database Support**: 
+  - SQL Server: `MERGE INTO`.
+  - Oracle: Similar syntax.
+  - PostgreSQL: No `MERGE`; uses `INSERT ... ON CONFLICT`.
+- **Alias Use**: Optional but recommended for readability in multi-table operations.
+
+-------------------------------------------------------------------------------------------
+
+It seems you want me to focus on the `USING` clause of the `MERGE` command specifically, rather than proceeding to the next clause or command. I’ll assume you’re asking me to continue the clause-by-clause breakdown of `MERGE` that I started earlier (with `MERGE INTO`) and now move to the `USING` clause, including its keywords, as per your earlier request to explain keywords like `AS`, etc. I’ll provide a detailed explanation of the `USING` clause, its purpose, keywords, and an example, keeping it consistent with the `MERGE` context.
+
+Since you said "using" instead of "next," I’ll interpret this as a direct request for the `USING` clause. Let’s dive in!
+
+---
+
+### Clause #2: `USING source_table_or_query [AS alias]`
+
+#### Description:
+- **Purpose**: Specifies the source of data (a table, view, or query result) that the `MERGE` command compares against the target table to determine matches and perform actions (inserts, updates, deletes).
+- **Mandatory**: Yes; `MERGE` requires a source to sync with the target.
+- **Components**:
+  - `USING`: The keyword introducing the source.
+  - `source_table_or_query`: The table, view, or subquery providing the data to merge.
+  - `[AS alias]`: Optional; assigns an alias to the source for easier reference in the statement.
+
+#### Keywords:
+1. **`USING`**:
+   - **Meaning**: Indicates the source of data for the `MERGE` operation, distinguishing it from the target table specified in `MERGE INTO`.
+   - **Use**: Defines what data will be compared against the target to decide which rows to update, insert, or delete.
+   - **Context**: Unique to `MERGE`; not used in other commands like `INSERT` or `UPDATE` in this way.
+
+2. **`AS`** (optional):
+   - **Meaning**: Assigns a temporary alias to the source table or query result.
+   - **Use**: Simplifies referencing source columns in the `ON` and action clauses, especially when column names overlap with the target or involve complex queries.
+   - **Context**: Same as in `MERGE INTO` or `SELECT`—a standard SQL aliasing keyword.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE new_employees (
+    employee_id INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000);
+INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+```
+
+**MERGE with USING Clause**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+
+- **Clause Breakdown**:
+  - **`USING new_employees`**: Specifies `new_employees` as the source table containing the data to merge into `employees`.
+  - **`AS ne`**: Aliases `new_employees` as `ne`, so columns can be referenced as `ne.employee_id`, `ne.name`, etc., in the `ON` and action clauses.
+- **Action**: 
+  - Compares `new_employees` with `employees`.
+  - Updates `employee_id = 2` (Bob) with new `name` and `salary`.
+  - Inserts `employee_id = 3` (Carol) as a new row.
+- **Result**:
+  ```sql
+  SELECT * FROM employees;
+  ```
+  ```
+  employee_id | name         | salary
+  ------------+--------------+--------
+  1           | Alice        | 50000.00
+  2           | Bob Updated  | 65000.00
+  3           | Carol        | 55000.00
+  ```
+
+#### Using a Query Instead of a Table:
+```sql
+MERGE INTO employees AS e
+USING (SELECT 2 AS employee_id, 'Bob New' AS name, 70000 AS salary) AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+- **Explanation**: 
+  - **`USING (SELECT ...)`**: Uses an inline query as the source instead of a table.
+  - **`AS ne`**: Aliases the query result as `ne`.
+  - **Result**: Updates `employee_id = 2` to "Bob New" and 70000.
+
+---
+
+### Notes:
+- **Flexibility**: 
+  - `USING` can reference a table, view, or subquery (e.g., `SELECT` with joins or filters).
+  - Example with join:
+    ```sql
+    USING (SELECT ne.employee_id, ne.name, ne.salary 
+           FROM new_employees ne 
+           JOIN departments d ON ne.dept_id = d.id) AS ne
+    ```
+- **Database Variations**:
+  - SQL Server/Oracle: `USING` as shown.
+  - PostgreSQL: No `MERGE` (uses `INSERT ... ON CONFLICT` without `USING`).
+  - MySQL: No `MERGE`.
+- **Alias**: Optional but highly recommended for clarity, especially with subqueries.
+
+
+-----------------------------------------------------------------------------------
+Let’s move to the next clause of the `MERGE` command! We’ve covered `MERGE INTO` and `USING`, so now we’ll tackle the `ON` clause, continuing our clause-by-clause breakdown. I’ll include the relevant keywords (like `ON`) as per your request to explain keywords such as `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. Here’s the detailed explanation for the `ON` clause with its keyword, usage, and example.
+
+---
+
+### Clause #3: `ON (condition)`
+
+#### Description:
+- **Purpose**: Defines the condition that determines how rows in the target table (from `MERGE INTO`) match rows in the source (from `USING`). It acts like a join condition to identify "matched" and "not matched" rows.
+- **Mandatory**: Yes; `MERGE` requires this clause to decide which actions (update, insert, delete) to perform.
+- **Components**:
+  - `ON`: The keyword introducing the matching condition.
+  - `(condition)`: A logical expression (e.g., equality between columns) enclosed in parentheses.
+
+#### Keyword:
+1. **`ON`**:
+   - **Meaning**: Specifies the condition for matching rows between the target and source.
+   - **Use**: Establishes the logic to determine whether a row in the target has a corresponding row in the source, driving the `WHEN MATCHED` and `WHEN NOT MATCHED` actions.
+   - **Context**: Similar to `ON` in `JOIN` clauses (e.g., `SELECT ... FROM table1 JOIN table2 ON ...`), but here it’s for merging data, not just querying.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE new_employees (
+    employee_id INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000);
+INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+```
+
+**MERGE with ON Clause**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+
+- **Clause Breakdown**:
+  - **`ON (e.employee_id = ne.employee_id)`**: Matches rows where the `employee_id` in `employees` equals the `employee_id` in `new_employees`.
+    - **Matched**: `employee_id = 2` exists in both tables, so it’s a match.
+    - **Not Matched**: `employee_id = 3` is only in `new_employees` (not in `employees`), and `employee_id = 1` is only in `employees` (not in `new_employees`).
+- **Action**: 
+  - For `employee_id = 2` (matched): Updates `name` to "Bob Updated" and `salary` to 65000.
+  - For `employee_id = 3` (not matched by target): Inserts a new row for Carol.
+  - `employee_id = 1` (not in source): Remains unchanged.
+- **Result**:
+  ```sql
+  SELECT * FROM employees;
+  ```
+  ```
+  employee_id | name         | salary
+  ------------+--------------+--------
+  1           | Alice        | 50000.00
+  2           | Bob Updated  | 65000.00
+  3           | Carol        | 55000.00
+  ```
+
+#### Complex ON Condition:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id AND e.name != ne.name)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary;
+```
+- **Explanation**: 
+  - **`ON (e.employee_id = ne.employee_id AND e.name != ne.name)`**: Only considers rows "matched" if `employee_id` is the same *and* `name` differs.
+  - **Result**: Updates `employee_id = 2` (Bob’s name changes), but skips `employee_id = 3` (no match in target).
+
+---
+
+### Notes:
+- **Flexibility**: 
+  - The condition can use any logical expression (e.g., `e.col1 = ne.col1 AND e.col2 > ne.col2`).
+  - Often uses primary keys or unique identifiers for matching.
+- **Database Variations**:
+  - SQL Server/Oracle: `ON (condition)` as shown.
+  - PostgreSQL: No `MERGE`; `ON CONFLICT (column)` in `INSERT` serves a similar role.
+  - MySQL: No `MERGE`.
+- **Importance**: The `ON` clause drives the entire `MERGE` logic—everything hinges on how matches are defined.
+
+---
+
+This covers the `ON` clause and its keyword (`ON`)! Say "next" to move to the next clause (`WHEN MATCHED`) and its keywords (`WHEN`, `MATCHED`, `THEN`), or let me know if you want more on `ON`!
+-------------------------------------------------------------------------------------------------------
+
+Let’s proceed to the next clause of the `MERGE` command! We’ve covered `MERGE INTO`, `USING`, and `ON`, so now we’ll tackle the `WHEN MATCHED` clause. I’ll continue the clause-by-clause breakdown, including the relevant keywords (`WHEN`, `MATCHED`, `THEN`) as per your request to explain keywords like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. Here’s the detailed explanation with an example.
+
+---
+
+### Clause #4: `WHEN MATCHED [AND condition] THEN`
+
+#### Description:
+- **Purpose**: Specifies the action to take (e.g., `UPDATE` or `DELETE`) when a row in the target table matches a row in the source table based on the `ON` condition.
+- **Mandatory**: No; optional, but at least one `WHEN` clause (e.g., `WHEN MATCHED` or `WHEN NOT MATCHED`) is typically required for `MERGE` to be meaningful.
+- **Components**:
+  - `WHEN MATCHED`: Indicates a match exists between target and source.
+  - `[AND condition]`: Optional; refines the match with an additional condition.
+  - `THEN`: Introduces the action to perform (e.g., `UPDATE`, `DELETE`).
+
+#### Keywords:
+1. **`WHEN`**:
+   - **Meaning**: Introduces a conditional scenario in the `MERGE` logic (e.g., matched or not matched).
+   - **Use**: Sets up the context for what follows (`MATCHED` or `NOT MATCHED`), determining when the subsequent action applies.
+   - **Context**: Used in `MERGE` to branch logic, similar to `WHEN` in a `CASE` expression.
+
+2. **`MATCHED`**:
+   - **Meaning**: Specifies that the condition in the `ON` clause is true for a row (i.e., the target row has a corresponding source row).
+   - **Use**: Triggers an action for rows that satisfy the `ON` condition.
+   - **Context**: Specific to `MERGE`; indicates a successful match.
+
+3. **`THEN`**:
+   - **Meaning**: Signals the action to execute when the `WHEN MATCHED` condition is met.
+   - **Use**: Links the condition to an operation (`UPDATE`, `DELETE`), completing the clause.
+   - **Context**: Pairs with `WHEN` in `MERGE`, akin to `THEN` in `CASE WHEN ... THEN ...`.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE new_employees (
+    employee_id INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000);
+INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+```
+
+**MERGE with WHEN MATCHED Clause**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+
+- **Clause Breakdown**:
+  - **`WHEN MATCHED`**: Applies to rows where `e.employee_id = ne.employee_id` is true (e.g., `employee_id = 2`).
+    - **Matched Row**: `employee_id = 2` (Bob) exists in both tables.
+  - **`THEN`**: Specifies that an `UPDATE` action follows for matched rows.
+- **Action**: Updates `employee_id = 2` in `employees`:
+  - `name` changes from "Bob" to "Bob Updated".
+  - `salary` changes from 60000 to 65000.
+- **Result**:
+  ```sql
+  SELECT * FROM employees;
+  ```
+  ```
+  employee_id | name         | salary
+  ------------+--------------+--------
+  1           | Alice        | 50000.00
+  2           | Bob Updated  | 65000.00
+  3           | Carol        | 55000.00
+  ```
+
+#### With AND Condition:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED AND ne.salary > e.salary THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+- **Explanation**:
+  - **`WHEN MATCHED AND ne.salary > e.salary`**: Only updates matched rows if the source salary is higher.
+    - `employee_id = 2`: 65000 > 60000, so it updates.
+  - **Result**: Same as above, but if `ne.salary` were 55000, no update would occur for `employee_id = 2`.
+
+---
+
+### Notes:
+- **Flexibility**: 
+  - Can include `AND` for finer control (e.g., `WHEN MATCHED AND ne.updated_date > e.updated_date`).
+  - Supports `DELETE` instead of `UPDATE` (e.g., `WHEN MATCHED THEN DELETE` removes matched rows).
+- **Database Variations**:
+  - SQL Server/Oracle: `WHEN MATCHED THEN` as shown.
+  - PostgreSQL: No `MERGE`; `ON CONFLICT DO UPDATE` approximates this.
+  - MySQL: No `MERGE`.
+- **Multiple Clauses**: You can have multiple `WHEN MATCHED` clauses with different conditions (SQL Server/Oracle).
+
+----------------------------------------------------------------------------------
+
+Let’s move to the next clause of the `MERGE` command! We’ve covered `MERGE INTO`, `USING`, `ON`, and `WHEN MATCHED`, so now we’ll tackle the `WHEN NOT MATCHED` clause. I’ll continue the clause-by-clause breakdown, including the relevant keywords (`WHEN`, `NOT MATCHED`, `THEN`) as per your request to explain keywords like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. Here’s the detailed explanation with an example.
+
+---
+
+### Clause #5: `WHEN NOT MATCHED [BY TARGET] THEN`
+
+#### Description:
+- **Purpose**: Specifies the action to take (typically `INSERT`) when a row in the source table does not have a corresponding match in the target table based on the `ON` condition.
+- **Mandatory**: No; optional, but often paired with `WHEN MATCHED` to handle all possible scenarios in a `MERGE`.
+- **Components**:
+  - `WHEN NOT MATCHED`: Indicates no match exists between the target and source.
+  - `[BY TARGET]`: Optional (SQL Server-specific); clarifies that the lack of match is from the target’s perspective (i.e., source row doesn’t exist in target).
+  - `THEN`: Introduces the action to perform (e.g., `INSERT`).
+
+#### Keywords:
+1. **`WHEN`**:
+   - **Meaning**: Introduces a conditional scenario in the `MERGE` logic, here for non-matching rows.
+   - **Use**: Sets up the context for the `NOT MATCHED` condition, determining when the subsequent action applies.
+   - **Context**: Same as in `WHEN MATCHED`, branching the `MERGE` logic.
+
+2. **`NOT MATCHED`**:
+   - **Meaning**: Specifies that the `ON` condition is false for a row (i.e., no corresponding row exists in the target table).
+   - **Use**: Triggers an action (usually `INSERT`) for source rows that don’t match any target rows.
+   - **Context**: Specific to `MERGE`; contrasts with `MATCHED`.
+
+3. **`THEN`**:
+   - **Meaning**: Signals the action to execute when the `WHEN NOT MATCHED` condition is met.
+   - **Use**: Links the condition to an operation (typically `INSERT`), completing the clause.
+   - **Context**: Same as in `WHEN MATCHED`, pairing with `WHEN`.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE new_employees (
+    employee_id INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000);
+INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+```
+
+**MERGE with WHEN NOT MATCHED Clause**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+
+- **Clause Breakdown**:
+  - **`WHEN NOT MATCHED`**: Applies to rows in `new_employees` where `ne.employee_id` doesn’t exist in `employees` (e.g., `employee_id = 3`).
+    - **Not Matched Row**: `employee_id = 3` (Carol) is in `new_employees` but not in `employees`.
+  - **`THEN`**: Specifies that an `INSERT` action follows for non-matched rows.
+- **Action**: Inserts `employee_id = 3` from `new_employees` into `employees`:
+  - Adds a new row: `(3, 'Carol', 55000)`.
+- **Result**:
+  ```sql
+  SELECT * FROM employees;
+  ```
+  ```
+  employee_id | name         | salary
+  ------------+--------------+--------
+  1           | Alice        | 50000.00
+  2           | Bob Updated  | 65000.00
+  3           | Carol        | 55000.00
+  ```
+
+#### With Explicit BY TARGET (SQL Server)**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED BY TARGET THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary);
+```
+- **Explanation**:
+  - **`WHEN NOT MATCHED BY TARGET`**: Clarifies that this applies to source rows (`new_employees`) not found in the target (`employees`).
+  - **Result**: Identical to above; `BY TARGET` is optional in this case but explicit.
+
+---
+
+### Notes:
+- **Flexibility**: 
+  - Typically used for `INSERT`, but some systems allow conditions (e.g., `WHEN NOT MATCHED AND ne.salary > 0 THEN ...`).
+  - `BY TARGET` distinguishes it from `WHEN NOT MATCHED BY SOURCE` (covered next).
+- **Database Variations**:
+  - SQL Server: `WHEN NOT MATCHED [BY TARGET] THEN`.
+  - Oracle: `WHEN NOT MATCHED THEN` (no `BY TARGET`).
+  - PostgreSQL: No `MERGE`; `ON CONFLICT DO NOTHING` approximates this.
+  - MySQL: No `MERGE`.
+- **Common Use**: Adds new records from the source to the target.
+
+------------------------------------------------------------------------------------------------------------
+
+Let’s proceed to the next clause of the `MERGE` command! We’ve covered `MERGE INTO`, `USING`, `ON`, `WHEN MATCHED`, and `WHEN NOT MATCHED` (by target). Now we’ll tackle the `WHEN NOT MATCHED BY SOURCE` clause, continuing our breakdown. I’ll include the relevant keywords (`WHEN`, `NOT MATCHED`, `BY SOURCE`, `THEN`) as per your request to explain keywords like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. This clause is less common but powerful, so let’s dive in with a detailed explanation and example.
+
+---
+
+### Clause #6: `WHEN NOT MATCHED BY SOURCE [AND condition] THEN`
+
+#### Description:
+- **Purpose**: Specifies the action to take (typically `DELETE` or `UPDATE`) when a row in the target table does not have a corresponding match in the source table based on the `ON` condition. It’s the opposite perspective of `WHEN NOT MATCHED BY TARGET`.
+- **Mandatory**: No; optional, used when you need to handle target rows absent from the source (e.g., to clean up outdated data).
+- **Components**:
+  - `WHEN NOT MATCHED BY SOURCE`: Indicates no match exists for a target row in the source.
+  - `[AND condition]`: Optional; refines the non-match with an additional condition.
+  - `THEN`: Introduces the action (e.g., `DELETE`, `UPDATE`).
+
+#### Keywords:
+1. **`WHEN`**:
+   - **Meaning**: Introduces a conditional scenario in the `MERGE` logic, here for target rows not matched by the source.
+   - **Use**: Sets up the context for the `NOT MATCHED BY SOURCE` condition.
+   - **Context**: Consistent with other `WHEN` uses in `MERGE`.
+
+2. **`NOT MATCHED`**:
+   - **Meaning**: Specifies that the `ON` condition is false from one perspective (here, target rows without source matches).
+   - **Use**: Triggers an action for target rows not found in the source.
+   - **Context**: Paired with `BY SOURCE` to differentiate from `NOT MATCHED BY TARGET`.
+
+3. **`BY SOURCE`**:
+   - **Meaning**: Clarifies that the lack of match is from the source’s perspective (i.e., target rows not present in the source).
+   - **Use**: Distinguishes this clause from `WHEN NOT MATCHED BY TARGET`, focusing on target cleanup rather than source insertion.
+   - **Context**: SQL Server-specific; Oracle uses `WHEN NOT MATCHED THEN` without this distinction.
+
+4. **`THEN`**:
+   - **Meaning**: Signals the action to execute when the `WHEN NOT MATCHED BY SOURCE` condition is met.
+   - **Use**: Links the condition to an operation (e.g., `DELETE`, `UPDATE`).
+   - **Context**: Same as in other `WHEN` clauses.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+CREATE TABLE new_employees (
+    employee_id INT,
+    name VARCHAR(100),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees VALUES (1, 'Alice', 50000), (2, 'Bob', 60000), (4, 'Dave', 70000);
+INSERT INTO new_employees VALUES (2, 'Bob Updated', 65000), (3, 'Carol', 55000);
+```
+
+**MERGE with WHEN NOT MATCHED BY SOURCE Clause**:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary)
+WHEN NOT MATCHED BY SOURCE THEN
+    DELETE;
+```
+
+- **Clause Breakdown**:
+  - **`WHEN NOT MATCHED BY SOURCE`**: Applies to rows in `employees` where `e.employee_id` doesn’t exist in `new_employees` (e.g., `employee_id = 1` and `4`).
+    - **Not Matched Rows**: `employee_id = 1` (Alice) and `4` (Dave) are in `employees` but not in `new_employees`.
+  - **`THEN`**: Specifies that a `DELETE` action follows for these non-matched rows.
+- **Action**:
+  - `employee_id = 2`: Matched, updates to "Bob Updated", 65000.
+  - `employee_id = 3`: Not matched by target, inserts "Carol", 55000.
+  - `employee_id = 1` and `4`: Not matched by source, deleted.
+- **Result**:
+  ```sql
+  SELECT * FROM employees;
+  ```
+  ```
+  employee_id | name         | salary
+  ------------+--------------+--------
+  2           | Bob Updated  | 65000.00
+  3           | Carol        | 55000.00
+  ```
+
+#### With AND Condition:
+```sql
+MERGE INTO employees AS e
+USING new_employees AS ne
+ON (e.employee_id = ne.employee_id)
+WHEN MATCHED THEN
+    UPDATE SET e.name = ne.name, e.salary = ne.salary
+WHEN NOT MATCHED THEN
+    INSERT (employee_id, name, salary) VALUES (ne.employee_id, ne.name, ne.salary)
+WHEN NOT MATCHED BY SOURCE AND e.salary < 60000 THEN
+    DELETE;
+```
+- **Explanation**:
+  - **`WHEN NOT MATCHED BY SOURCE AND e.salary < 60000`**: Deletes only non-matched target rows with `salary < 60000`.
+    - `employee_id = 1` (50000): Deleted.
+    - `employee_id = 4` (70000): Kept.
+  - **Result**:
+    ```
+    employee_id | name         | salary
+    ------------+--------------+--------
+    2           | Bob Updated  | 65000.00
+    3           | Carol        | 55000.00
+    4           | Dave         | 70000.00
+    ```
+
+---
+
+### Notes:
+- **Flexibility**: 
+  - Can use `UPDATE` instead of `DELETE` (e.g., `UPDATE SET e.status = 'Inactive'`).
+  - `AND` condition refines the scope (e.g., delete only certain non-matched rows).
+- **Database Variations**:
+  - SQL Server: `WHEN NOT MATCHED BY SOURCE THEN`.
+  - Oracle: No direct equivalent; requires a separate `WHEN NOT MATCHED THEN` with logic inversion.
+  - PostgreSQL/MySQL: No `MERGE`.
+- **Use Case**: Syncs target to source, removing obsolete rows.
+
+---
