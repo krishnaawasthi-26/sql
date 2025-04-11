@@ -1,0 +1,352 @@
+ SQL Command #18: `CREATE FUNCTION`
+
+The `CREATE FUNCTION` command defines a new user-defined function (UDF) in the database. Functions encapsulate reusable logic (e.g., calculations, data transformations) that can be called in queries or other operations. It’s a Data Definition Language (DDL) command.
+
+#### Syntax:
+```sql
+CREATE [OR REPLACE] FUNCTION function_name (parameters)
+RETURNS return_type
+AS
+$$
+    function_body
+$$
+LANGUAGE language_name;
+```
+
+- **`function_name`**: Name of the function.
+- **`parameters`**: Input arguments (optional).
+- **`RETURNS return_type`**: Data type of the output.
+- **`AS $$ ... $$`**: Defines the function’s logic.
+- **`LANGUAGE language_name`**: Specifies the programming language (e.g., SQL, PL/pgSQL).
+
+#### Key Points:
+1. **Purpose**: Creates a custom function for reuse in SQL statements.
+2. **Types**: Can be scalar (returns one value) or table-returning (returns a result set).
+3. **Support**: Common in PostgreSQL, Oracle (PL/SQL), SQL Server (T-SQL); MySQL has limited support.
+4. **Execution**: Called like built-in functions (e.g., `SELECT function_name(arg)`).
+
+---
+
+### Components (Pseudo-Clauses)
+`CREATE FUNCTION` is a single command but has distinct parts I’ll treat as "clauses" for breakdown:
+1. **`CREATE [OR REPLACE] FUNCTION function_name (parameters)`**: Core definition and name.
+2. **`RETURNS return_type`**: Output specification.
+3. **`AS $$ function_body $$ LANGUAGE language_name`**: Logic and language.
+
+I’ll start with the first component now and proceed with "next" for each subsequent one.
+
+---
+
+### Clause #1: `CREATE [OR REPLACE] FUNCTION function_name (parameters)`
+
+#### Description:
+- **Purpose**: Initiates the function creation, names it, and defines its input parameters.
+- **Mandatory**: Yes; the command’s foundation.
+- **Components**:
+  - `CREATE FUNCTION`: Starts the function definition.
+  - `OR REPLACE`: Optional; overwrites an existing function with the same name.
+  - `function_name`: Unique name for the function.
+  - `(parameters)`: Optional; input arguments with names and types.
+
+#### Keywords:
+1. **`CREATE`**:
+   - **Meaning**: Instructs the DBMS to create a new object (here, a function).
+   - **Use**: Begins the DDL operation.
+   - **Context**: Standard DDL keyword (e.g., `CREATE TABLE`).
+
+2. **`OR`** (in `OR REPLACE`):
+   - **Meaning**: Combines with `REPLACE` to allow overwriting.
+   - **Use**: Conditions the creation on replacing an existing function.
+   - **Context**: Logical operator reused here for optional behavior.
+
+3. **`REPLACE`** (in `OR REPLACE`):
+   - **Meaning**: Overwrites an existing function with the same name without requiring a `DROP`.
+   - **Use**: Avoids errors if the function already exists; updates it instead.
+   - **Context**: Common in DDL for redefinition (e.g., `CREATE OR REPLACE VIEW`).
+
+4. **`FUNCTION`**:
+   - **Meaning**: Specifies that the object is a function.
+   - **Use**: Differentiates from `TABLE`, `VIEW`, etc.
+   - **Context**: Targets a programmable unit.
+
+---
+
+### Example and Explanation
+**Basic Example**:
+```sql
+CREATE FUNCTION add_numbers(a INT, b INT)
+RETURNS INT
+AS $$
+    SELECT a + b;
+$$
+LANGUAGE SQL;
+```
+- **Clause Breakdown**:
+  - **`CREATE`**: Starts the function creation.
+  - **`FUNCTION`**: Specifies a function.
+  - **`add_numbers`**: Names the function.
+  - **`(a INT, b INT)`**: Defines two integer parameters, `a` and `b`.
+- **Action**: Creates a function that adds two numbers.
+- **Usage**: 
+  ```sql
+  SELECT add_numbers(3, 4);
+  ```
+  - **Result**: `7`
+
+**With OR REPLACE**:
+```sql
+CREATE OR REPLACE FUNCTION add_numbers(a INT, b INT)
+RETURNS INT
+AS $$
+    SELECT a + b + 10;
+$$
+LANGUAGE SQL;
+```
+- **Explanation**:
+  - **`OR REPLACE`**: Overwrites the previous `add_numbers` if it exists.
+  - New logic adds 10 to the sum.
+- **Result**: `SELECT add_numbers(3, 4)` now returns `17`.
+
+---
+
+### Notes:
+- **Parameters**: 
+  - Can be empty: `CREATE FUNCTION no_args()`.
+  - Include types: `(x INT, y VARCHAR)`.
+- **Database Variations**:
+  - **PostgreSQL**: As shown (SQL or PL/pgSQL).
+  - **SQL Server**: `CREATE FUNCTION dbo.add_numbers (@a INT, @b INT) RETURNS INT AS BEGIN RETURN @a + @b END;`.
+  - **Oracle**: PL/SQL syntax (e.g., `CREATE FUNCTION ... RETURN ... IS ...`).
+  - **MySQL**: Limited; uses `CREATE FUNCTION` for stored functions in SQL.
+- **Scope**: Schema-specific (e.g., `hr.add_numbers` if created in `hr`).
+
+------------------------------------------------------------------------------
+              Let’s continue with the next component of the `CREATE FUNCTION` command! We’ve covered the first "clause" (`CREATE [OR REPLACE] FUNCTION function_name (parameters)`), so now we’ll move to the second component: `RETURNS return_type`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #18 of the 19 remaining.
+
+---
+
+### Clause #2: `RETURNS return_type`
+
+#### Description:
+- **Purpose**: Specifies the data type of the value (or result set) that the function returns when called. This defines what the function outputs after executing its logic.
+- **Mandatory**: Yes; every function must declare its return type to ensure type safety and usability in queries.
+- **Components**:
+  - `RETURNS`: Indicates the return type is being defined.
+  - `return_type`: The data type of the output (e.g., `INT`, `VARCHAR`, `TABLE`).
+
+#### Keyword:
+1. **`RETURNS`**:
+   - **Meaning**: Declares that the function will produce an output and specifies its type.
+   - **Use**: Ensures the function’s result can be used in SQL expressions or statements (e.g., `SELECT function_name()`).
+   - **Context**: Specific to function/procedure creation; distinguishes input (`parameters`) from output.
+
+#### Component:
+- **`return_type`**:
+   - **Meaning**: The specific data type returned (e.g., `INT`, `DECIMAL`, `VARCHAR`, `TABLE`).
+   - **Use**: Defines the function’s output format (scalar value or table).
+   - **Context**: Matches DBMS-supported types; can be simple (e.g., `INT`) or complex (e.g., `TABLE (col1 INT, col2 VARCHAR)`).
+
+---
+
+### Example and Explanation
+**Scalar Return Example**:
+```sql
+CREATE FUNCTION add_numbers(a INT, b INT)
+RETURNS INT
+AS $$
+    SELECT a + b;
+$$
+LANGUAGE SQL;
+```
+- **Clause Breakdown**:
+  - **`RETURNS`**: Specifies that the function returns a value.
+  - **`INT`**: Sets the return type to an integer.
+- **Action**: 
+  - The function computes `a + b` and returns it as an integer.
+- **Usage**: 
+  ```sql
+  SELECT add_numbers(3, 4);
+  ```
+  - **Result**: `7` (an `INT`).
+
+**Table Return Example (PostgreSQL)**:
+```sql
+CREATE FUNCTION get_employees()
+RETURNS TABLE (employee_id INT, name VARCHAR)
+AS $$
+    SELECT employee_id, name FROM employees;
+$$
+LANGUAGE SQL;
+```
+- **Clause Breakdown**:
+  - **`RETURNS`**: Indicates a return value.
+  - **`TABLE (employee_id INT, name VARCHAR)`**: Specifies a table result with two columns: `employee_id` (integer) and `name` (varchar).
+- **Action**: 
+  - Returns a result set from the `employees` table.
+- **Usage**: 
+  ```sql
+  SELECT * FROM get_employees();
+  ```
+  - **Result**: A table-like output (e.g., `(1, 'Alice')`, `(2, 'Bob')` if `employees` has data).
+
+---
+
+### Notes:
+- **Return Types**:
+  - **Scalar**: Single value (e.g., `INT`, `VARCHAR`, `BOOLEAN`).
+  - **Table**: Result set (e.g., `TABLE (...)` in PostgreSQL, `TABLE` in SQL Server).
+  - **Setof**: Multiple rows of a type (e.g., `SETOF INT` in PostgreSQL).
+- **Database Variations**:
+  - **PostgreSQL**: `RETURNS INT`, `RETURNS TABLE (...)`.
+  - **SQL Server**: `RETURNS INT`, `RETURNS TABLE` (inline or multi-statement).
+    ```sql
+    CREATE FUNCTION dbo.add_numbers (@a INT, @b INT) RETURNS INT AS BEGIN RETURN @a + @b END;
+    ```
+  - **Oracle**: `RETURN INT` (slight syntax difference).
+    ```sql
+    CREATE FUNCTION add_numbers(a IN NUMBER, b IN NUMBER) RETURN NUMBER IS BEGIN RETURN a + b; END;
+    ```
+  - **MySQL**: `RETURNS INT` (limited to stored functions).
+- **Requirement**: Must match the function’s logic (e.g., `SELECT a + b` returns an `INT`).
+
+---------------------------------------------------------------------
+Let’s proceed to the final component of the `CREATE FUNCTION` command! We’ve covered `CREATE [OR REPLACE] FUNCTION function_name (parameters)` and `RETURNS return_type`, so now we’ll tackle the third "clause": `AS $$ function_body $$ LANGUAGE language_name`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #18 of the 19 remaining.
+
+---
+
+### Clause #3: `AS $$ function_body $$ LANGUAGE language_name`
+
+#### Description:
+- **Purpose**: Defines the function’s logic (what it does) and specifies the programming language used to write it. This is the "body" of the function, containing the executable code.
+- **Mandatory**: Yes; a function must have logic to be useful, and the language must be specified (though defaults exist in some systems).
+- **Components**:
+  - `AS`: Introduces the function’s body.
+  - `$$ ... $$`: Delimiters enclosing the code (varies by DBMS).
+  - `function_body`: The actual code or SQL statements.
+  - `LANGUAGE language_name`: Declares the language (e.g., `SQL`, `PLPGSQL`).
+
+#### Keywords:
+1. **`AS`**:
+   - **Meaning**: Indicates that the following text defines the function’s implementation.
+   - **Use**: Links the function’s signature (name, parameters, return type) to its executable logic.
+   - **Context**: Common in DDL for defining bodies (e.g., `CREATE VIEW ... AS`).
+
+2. **`LANGUAGE`**:
+   - **Meaning**: Specifies the programming language of the function’s body.
+   - **Use**: Tells the DBMS how to interpret the code (e.g., SQL, PL/pgSQL, T-SQL).
+   - **Context**: Essential for functions; allows flexibility beyond plain SQL.
+
+#### Components:
+- **`$$ ... $$`**:
+   - **Meaning**: Delimiters marking the start and end of the function body (PostgreSQL-specific; others use `BEGIN ... END`).
+   - **Use**: Encloses the code to separate it from the rest of the statement.
+   - **Context**: Alternative delimiters like single quotes or keywords vary by DBMS.
+
+- **`function_body`**:
+   - **Meaning**: The code that executes when the function is called.
+   - **Use**: Implements the logic (e.g., calculations, queries).
+   - **Context**: Can be SQL statements or procedural code.
+
+- **`language_name`**:
+   - **Meaning**: The specific language (e.g., `SQL`, `PLPGSQL`, `TSQL`).
+   - **Use**: Matches the body’s syntax and capabilities.
+   - **Context**: Varies by DBMS support.
+
+---
+
+### Example and Explanation
+**Simple SQL Function (PostgreSQL)**:
+```sql
+CREATE FUNCTION add_numbers(a INT, b INT)
+RETURNS INT
+AS $$
+    SELECT a + b;
+$$
+LANGUAGE SQL;
+```
+- **Clause Breakdown**:
+  - **`AS`**: Introduces the function body.
+  - **`$$ ... $$`**: Encloses the logic (`SELECT a + b`).
+  - **`function_body`**: `SELECT a + b` computes the sum.
+  - **`LANGUAGE`**: Specifies `SQL` as the language.
+  - **`SQL`**: Indicates plain SQL (no procedural logic).
+- **Action**: Adds two numbers and returns the result.
+- **Usage**: 
+  ```sql
+  SELECT add_numbers(3, 4);
+  ```
+  - **Result**: `7`
+
+**PL/pgSQL Function (PostgreSQL)**:
+```sql
+CREATE FUNCTION multiply_with_check(a INT, b INT)
+RETURNS INT
+AS $$
+BEGIN
+    IF a IS NULL OR b IS NULL THEN
+        RETURN 0;
+    ELSE
+        RETURN a * b;
+    END IF;
+END;
+$$
+LANGUAGE PLPGSQL;
+```
+- **Clause Breakdown**:
+  - **`AS`**: Starts the body definition.
+  - **`$$ ... $$`**: Encloses the procedural code.
+  - **`function_body`**: Uses `IF` to check for nulls, returns 0 or the product.
+  - **`LANGUAGE`**: Specifies `PLPGSQL`.
+  - **`PLPGSQL`**: Indicates PostgreSQL’s procedural language.
+- **Usage**: 
+  ```sql
+  SELECT multiply_with_check(5, 3);  -- Returns 15
+  SELECT multiply_with_check(NULL, 3);  -- Returns 0
+  ```
+
+---
+
+### Database Variations
+1. **SQL Server (T-SQL)**:
+   ```sql
+   CREATE FUNCTION dbo.add_numbers (@a INT, @b INT)
+   RETURNS INT
+   AS
+   BEGIN
+       RETURN @a + @b;
+   END;
+   ```
+   - **`AS BEGIN ... END`**: Replaces `$$ ... $$`; no explicit `LANGUAGE` (T-SQL implied).
+
+2. **Oracle (PL/SQL)**:
+   ```sql
+   CREATE FUNCTION add_numbers(a IN NUMBER, b IN NUMBER)
+   RETURN NUMBER
+   AS
+   BEGIN
+       RETURN a + b;
+   END;
+   ```
+   - **`AS BEGIN ... END`**: Defines the body; no `LANGUAGE` (PL/SQL assumed).
+
+3. **MySQL**:
+   ```sql
+   CREATE FUNCTION add_numbers(a INT, b INT)
+   RETURNS INT
+   DETERMINISTIC
+   BEGIN
+       RETURN a + b;
+   END;
+   ```
+   - **`BEGIN ... END`**: Body delimiters; `DETERMINISTIC` optional (performance hint).
+
+---
+
+### Notes:
+- **Languages**: 
+  - `SQL`: Simple queries.
+  - `PLPGSQL` (PostgreSQL), `TSQL` (SQL Server), `PLSQL` (Oracle): Procedural logic.
+- **Body**: Can include variables, loops, or queries depending on language.
+- **Delimiters**: `$$` (PostgreSQL), `BEGIN ... END` (others), or quotes (some cases).
+
+---
