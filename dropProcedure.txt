@@ -1,0 +1,315 @@
+
+
+### SQL Command #21: `DROP PROCEDURE`
+
+The `DROP PROCEDURE` command removes an existing stored procedure from the database. It’s a Data Definition Language (DDL) command that deletes the procedure’s definition, making it unavailable for execution.
+
+#### Syntax:
+```sql
+DROP PROCEDURE [IF EXISTS] procedure_name [(parameter_types)] [options];
+```
+
+- **`procedure_name`**: The name of the procedure to delete.
+- **`IF EXISTS`**: Optional; prevents an error if the procedure doesn’t exist.
+- **`(parameter_types)`**: Optional; specifies parameter types for disambiguation (rare, DBMS-specific).
+- **`options`**: Database-specific modifiers (e.g., `CASCADE`, `RESTRICT`).
+
+#### Key Points:
+1. **Purpose**: Deletes a stored procedure created with `CREATE PROCEDURE`.
+2. **Destructive**: Removes the procedure permanently; no undo unless recreated.
+3. **Support**: Common in PostgreSQL, SQL Server, Oracle, MySQL.
+4. **Dependencies**: May affect objects relying on the procedure (handled by options).
+
+---
+
+### Components (Pseudo-Clauses)
+`DROP PROCEDURE` is a single-line command, but I’ll break it into parts for clarity:
+1. **`DROP PROCEDURE procedure_name [(parameter_types)]`**: Core command and target.
+2. **`IF EXISTS`**: Optional error-handling condition.
+3. **`options` (e.g., `CASCADE`, `RESTRICT`)**: Optional behavior modifiers.
+
+I’ll start with the first component now.
+
+---
+
+### Clause #1: `DROP PROCEDURE procedure_name [(parameter_types)]`
+
+#### Description:
+- **Purpose**: Specifies the stored procedure to delete, including its name and, if necessary, parameter types to identify it uniquely (rarely needed unless overloading is supported).
+- **Mandatory**: Yes; the command requires a target.
+- **Components**:
+  - `DROP PROCEDURE`: Initiates the deletion.
+  - `procedure_name`: The procedure’s name (e.g., `update_salary`).
+  - `(parameter_types)`: Optional; lists parameter types (e.g., `(INT, DECIMAL)`).
+
+#### Keywords:
+1. **`DROP`**:
+   - **Meaning**: Instructs the DBMS to remove an object (here, a procedure).
+   - **Use**: Starts the deletion process.
+   - **Context**: Standard DDL keyword (e.g., `DROP FUNCTION`).
+
+2. **`PROCEDURE`**:
+   - **Meaning**: Identifies the object type as a stored procedure.
+   - **Use**: Differentiates from `DROP FUNCTION`, `DROP TABLE`, etc.
+   - **Context**: Targets a callable routine.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+$$;
+```
+
+**Basic Example**:
+```sql
+DROP PROCEDURE update_salary;
+```
+- **Clause Breakdown**:
+  - **`DROP`**: Initiates the deletion.
+  - **`PROCEDURE`**: Specifies a stored procedure.
+  - **`update_salary`**: Names the procedure to delete.
+- **Action**: 
+  - Removes `update_salary` from the database.
+- **Result**: 
+  - `CALL update_salary(1, 1000.00)` fails (procedure doesn’t exist).
+  - Fails if `update_salary` has multiple versions (overloaded) in systems requiring parameter types.
+
+**With Parameter Types (PostgreSQL, rare)**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL) LANGUAGE SQL AS $$ ... $$;
+CREATE PROCEDURE update_salary(emp_id INT) LANGUAGE SQL AS $$ ... $$;
+
+DROP PROCEDURE update_salary(INT, DECIMAL);
+```
+- **Explanation**:
+  - **`update_salary(INT, DECIMAL)`**: Targets the version with two parameters.
+  - Deletes only that version; `update_salary(INT)` remains.
+- **Result**: 
+  - `CALL update_salary(1, 1000.00)` fails, but `CALL update_salary(1)` may work if defined.
+
+---
+
+### Notes:
+- **Overloading**: 
+  - Rare for procedures (more common in functions).
+  - PostgreSQL may require `(parameter_types)`; SQL Server/Oracle/MySQL typically use unique names.
+- **Database Variations**:
+  - **PostgreSQL**: `DROP PROCEDURE update_salary;`.
+  - **SQL Server**: `DROP PROCEDURE dbo.update_salary;`.
+  - **Oracle**: `DROP PROCEDURE update_salary;`.
+  - **MySQL**: `DROP PROCEDURE update_salary;`.
+- **Default Behavior**: Fails if the procedure doesn’t exist unless `IF EXISTS` is used.
+
+----------------------------------------------
+
+  Let’s continue with the next component of the `DROP PROCEDURE` command! We’ve covered the first "clause" (`DROP PROCEDURE procedure_name [(parameter_types)]`), so now we’ll move to the second component: `IF EXISTS`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #21 of the 33 total commands. We have 12 commands left after this.
+
+---
+
+### Clause #2: `IF EXISTS`
+
+#### Description:
+- **Purpose**: Prevents an error if the specified stored procedure does not exist in the database. It ensures the `DROP PROCEDURE` command runs safely, even if the procedure’s existence is uncertain.
+- **Mandatory**: No; optional. Without it, an error occurs if the procedure isn’t found.
+- **Component**:
+  - `IF EXISTS`: The condition ensuring the drop only proceeds if the procedure exists.
+
+#### Keywords:
+1. **`IF`**:
+   - **Meaning**: Introduces a conditional check.
+   - **Use**: Tests whether the procedure exists before attempting deletion.
+   - **Context**: Common in SQL for conditional operations (e.g., `IF EXISTS` in `DROP FUNCTION`).
+
+2. **`EXISTS`**:
+   - **Meaning**: Verifies the presence of the specified procedure in the database.
+   - **Use**: Allows the command to execute silently if the procedure doesn’t exist, avoiding an error.
+   - **Context**: Paired with `IF` in DDL commands for safety.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+$$;
+```
+
+**With IF EXISTS**:
+```sql
+DROP PROCEDURE IF EXISTS update_salary;
+```
+- **Clause Breakdown**:
+  - **`IF`**: Sets up the condition.
+  - **`EXISTS`**: Checks if `update_salary` exists.
+- **Action**: 
+  - Verifies `update_salary` exists and deletes it.
+- **Result**: 
+  - `update_salary` is removed; `CALL update_salary(1, 1000.00)` fails.
+  - If rerun, no error occurs (unlike without `IF EXISTS`).
+
+**Non-Existent Procedure**:
+```sql
+DROP PROCEDURE IF EXISTS adjust_salary;
+```
+- **Explanation**: 
+  - `adjust_salary` doesn’t exist.
+  - Without `IF EXISTS`: Error (e.g., "procedure adjust_salary does not exist" in PostgreSQL).
+  - With `IF EXISTS`: Executes silently, no error.
+- **Result**: No change (procedure wasn’t there), but no failure.
+
+**With Parameter Types (PostgreSQL, rare)**:
+```sql
+DROP PROCEDURE IF EXISTS update_salary(INT, DECIMAL);
+```
+- **Explanation**: 
+  - Targets `update_salary` with specific parameters.
+  - Deletes it if it exists; otherwise, does nothing.
+
+---
+
+### Notes:
+- **Behavior**: 
+  - Enhances script reliability, especially during migrations.
+  - Doesn’t address dependencies (covered in the next clause).
+- **Database Variations**:
+  - **PostgreSQL**: `DROP PROCEDURE IF EXISTS update_salary;`.
+  - **SQL Server**: `IF EXISTS (SELECT * FROM sys.procedures WHERE name = 'update_salary') DROP PROCEDURE dbo.update_salary;`.
+  - **Oracle**: `DROP PROCEDURE update_salary;` (no native `IF EXISTS`, requires PL/SQL check).
+  - **MySQL**: `DROP PROCEDURE IF EXISTS update_salary;`.
+- **Scope**: Only checks existence, not usage or dependencies.
+
+------------------------------------------------------------
+  Let’s proceed to the final component of the `DROP PROCEDURE` command! We’ve covered `DROP PROCEDURE procedure_name [(parameter_types)]` and `IF EXISTS`, so now we’ll tackle the third "clause": `options` (e.g., `CASCADE`, `RESTRICT`). I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #21 of the 33 total commands. We have 12 commands left after this.
+
+---
+
+### Clause #3: `options` (e.g., `CASCADE`, `RESTRICT`)
+
+#### Description:
+- **Purpose**: Modifies the behavior of `DROP PROCEDURE` by specifying how to handle dependencies (e.g., objects like triggers or views that rely on the procedure). Options determine whether the drop proceeds despite dependencies or is blocked to prevent unintended side effects.
+- **Mandatory**: No; optional. Without options, the default behavior depends on the DBMS (e.g., fails if dependencies exist).
+- **Components**:
+  - `CASCADE`: Drops the procedure and removes dependent objects.
+  - `RESTRICT`: Prevents dropping if dependencies exist (default in some systems).
+
+#### Keywords:
+1. **`CASCADE`**:
+   - **Meaning**: Drops the procedure and any dependent objects (e.g., triggers, views) that rely on it.
+   - **Use**: Ensures a clean deletion by automatically removing dependencies.
+   - **Context**: Common in DDL for recursive deletion (e.g., `DROP FUNCTION ... CASCADE`).
+
+2. **`RESTRICT`**:
+   - **Meaning**: Blocks the drop if other objects depend on the procedure, requiring manual resolution first.
+   - **Use**: Protects against unintended consequences by ensuring no dependencies are affected.
+   - **Context**: Often the default behavior; explicit in some systems.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+$$;
+
+CREATE VIEW salary_summary AS
+    SELECT employee_id, salary FROM employees WHERE salary > (SELECT add_numbers(1000, 2000));
+    -- Note: Assume add_numbers exists; view doesn’t directly depend on update_salary for simplicity
+```
+- **Note**: Direct dependencies on procedures are rare (e.g., views can’t call procedures), but some systems allow triggers or other procedures to depend on them. I’ll simulate a dependency where possible.
+
+**With CASCADE**:
+```sql
+DROP PROCEDURE update_salary CASCADE;
+```
+- **Clause Breakdown**:
+  - **`CASCADE`**: Deletes `update_salary` and drops any dependent objects (e.g., a trigger calling the procedure, if applicable).
+- **Action**: 
+  - Removes `update_salary`.
+  - If a trigger or other object depended on it, that would be dropped too.
+- **Result**: 
+  - `update_salary` is gone; `CALL update_salary(1, 1000.00)` fails.
+  - Dependencies (if any) are removed.
+
+**With RESTRICT**:
+```sql
+DROP PROCEDURE update_salary RESTRICT;
+```
+- **Clause Breakdown**:
+  - **`RESTRICT`**: Prevents deletion if dependencies exist.
+- **Action**: 
+  - Checks for dependencies (e.g., triggers or other procedures).
+  - Proceeds if none exist; otherwise, fails.
+- **Result**: 
+  - If no dependencies, `update_salary` is deleted.
+  - If dependencies exist, error (e.g., "cannot drop procedure update_salary because other objects depend on it" in PostgreSQL).
+
+**With IF EXISTS and CASCADE**:
+```sql
+DROP PROCEDURE IF EXISTS update_salary CASCADE;
+```
+- **Explanation**: 
+  - Combines `IF EXISTS` (no error if absent) and `CASCADE` (drops dependencies).
+  - Deletes `update_salary` and any dependencies if it exists; otherwise, does nothing.
+
+**Dependency Example (PostgreSQL)**:
+```sql
+CREATE PROCEDURE log_salary_change(emp_id INT)
+LANGUAGE SQL
+AS $$
+    INSERT INTO salary_log (employee_id, change_date) VALUES (emp_id, CURRENT_DATE);
+$$;
+
+CREATE TRIGGER salary_trigger 
+AFTER UPDATE ON employees 
+FOR EACH ROW 
+EXECUTE PROCEDURE log_salary_change(OLD.employee_id);
+```
+- **Drop Attempt**:
+  ```sql
+  DROP PROCEDURE log_salary_change RESTRICT;
+  ```
+  - Fails: Trigger `salary_trigger` depends on `log_salary_change`.
+  - Error: "cannot drop procedure log_salary_change because other objects depend on it".
+- **With CASCADE**:
+  ```sql
+  DROP PROCEDURE log_salary_change CASCADE;
+  ```
+  - Succeeds: Drops `log_salary_change` and `salary_trigger`.
+
+---
+
+### Notes:
+- **Dependencies**: 
+  - Rare for procedures (unlike functions); examples include triggers or other procedures calling it.
+  - Views typically can’t depend on procedures (procedures don’t return values).
+- **Database Variations**:
+  - **PostgreSQL**: `RESTRICT` default; `CASCADE` explicit.
+    ```sql
+    DROP PROCEDURE update_salary CASCADE;
+    ```
+  - **SQL Server**: No `CASCADE`/`RESTRICT`; fails if dependencies exist.
+    ```sql
+    DROP PROCEDURE dbo.update_salary;
+    ```
+  - **Oracle**: Drops without options; dependencies must be resolved.
+    ```sql
+    DROP PROCEDURE update_salary;
+    ```
+  - **MySQL**: Drops without regard to dependencies (limited dependency support).
+    ```sql
+    DROP PROCEDURE update_salary;
+    ```
+- **Use Case**: 
+  - `CASCADE`: Full cleanup of obsolete procedures.
+  - `RESTRICT`: Ensures safety by checking dependencies.
