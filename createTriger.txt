@@ -1,0 +1,982 @@
+Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 21 so far, up to `DROP PROCEDURE` (command #21), so now we’ll tackle command #22: `CREATE TRIGGER`. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 12 commands left after this.
+
+---
+
+### SQL Command #22: `CREATE TRIGGER`
+
+The `CREATE TRIGGER` command defines a trigger in the database. A trigger is a stored procedure that automatically executes in response to specific events (e.g., `INSERT`, `UPDATE`, `DELETE`) on a table or view. It’s a Data Definition Language (DDL) command used for enforcing rules, logging changes, or automating tasks.
+
+#### Syntax:
+```sql
+CREATE [OR REPLACE] TRIGGER trigger_name
+{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]
+ON table_name
+[FOR EACH ROW | FOR EACH STATEMENT]
+[WHEN (condition)]
+EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)
+```
+
+- **`trigger_name`**: Name of the trigger.
+- **`BEFORE | AFTER | INSTEAD OF`**: When the trigger fires relative to the event.
+- **`INSERT | UPDATE | DELETE | TRUNCATE`**: Event(s) triggering the action.
+- **`ON table_name`**: Target table or view.
+- **`FOR EACH ROW | FOR EACH STATEMENT`**: Granularity of execution.
+- **`WHEN (condition)`**: Optional; filters when the trigger fires.
+- **`EXECUTE PROCEDURE | FUNCTION`**: The procedure/function to run.
+
+#### Key Points:
+1. **Purpose**: Automates actions tied to table events (e.g., logging updates).
+2. **Types**: Row-level (per row) or statement-level (per operation).
+3. **Support**: Common in PostgreSQL, Oracle, SQL Server; MySQL supports with limits.
+4. **Execution**: Triggered automatically; no direct call needed.
+
+---
+
+### Components (Pseudo-Clauses)
+`CREATE TRIGGER` has multiple parts I’ll treat as "clauses" for clarity:
+1. **`CREATE [OR REPLACE] TRIGGER trigger_name`**: Core definition and name.
+2. **`{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`**: Timing and events.
+3. **`ON table_name`**: Target table.
+4. **`FOR EACH ROW | FOR EACH STATEMENT`**: Execution scope.
+5. **`WHEN (condition)`**: Optional condition.
+6. **`EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)`**: Action to perform.
+
+I’ll start with the first component now.
+
+---
+
+### Clause #1: `CREATE [OR REPLACE] TRIGGER trigger_name`
+
+#### Description:
+- **Purpose**: Initiates the trigger creation and assigns it a unique name within the schema or table scope.
+- **Mandatory**: Yes; the command’s foundation.
+- **Components**:
+  - `CREATE TRIGGER`: Starts the trigger definition.
+  - `OR REPLACE`: Optional; overwrites an existing trigger with the same name.
+  - `trigger_name`: Unique name for the trigger.
+
+#### Keywords:
+1. **`CREATE`**:
+   - **Meaning**: Instructs the DBMS to create a new object (here, a trigger).
+   - **Use**: Begins the DDL operation.
+   - **Context**: Standard DDL keyword (e.g., `CREATE PROCEDURE`).
+
+2. **`OR`** (in `OR REPLACE`):
+   - **Meaning**: Combines with `REPLACE` to allow overwriting.
+   - **Use**: Conditions creation on replacing an existing trigger.
+   - **Context**: Logical operator for redefinition.
+
+3. **`REPLACE`** (in `OR REPLACE`):
+   - **Meaning**: Overwrites an existing trigger without requiring a `DROP`.
+   - **Use**: Simplifies updates to trigger logic.
+   - **Context**: Common in DDL (e.g., `CREATE OR REPLACE PROCEDURE`).
+
+4. **`TRIGGER`**:
+   - **Meaning**: Specifies that the object is a trigger.
+   - **Use**: Differentiates from `FUNCTION`, `PROCEDURE`, etc.
+   - **Context**: Targets an event-driven routine.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+```
+
+**Basic Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Clause Breakdown**:
+  - **`CREATE`**: Starts the trigger creation.
+  - **`TRIGGER`**: Specifies a trigger.
+  - **`update_timestamp`**: Names the trigger.
+- **Action**: Defines a trigger (full logic later); here, it’s incomplete without the function but shows the clause.
+- **Result**: Trigger `update_timestamp` is set up (assuming `set_timestamp` exists).
+
+**With OR REPLACE**:
+```sql
+CREATE OR REPLACE TRIGGER update_timestamp
+BEFORE UPDATE ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Explanation**:
+  - **`OR REPLACE`**: Overwrites `update_timestamp` if it exists.
+  - Updates the trigger definition without dropping it first.
+- **Result**: Ensures the latest trigger logic is applied.
+
+---
+
+### Notes:
+- **Naming**: 
+  - Unique per table or schema (depends on DBMS).
+  - Descriptive (e.g., `log_salary_change`).
+- **Database Variations**:
+  - **PostgreSQL**: `CREATE TRIGGER update_timestamp ...`.
+  - **SQL Server**: `CREATE TRIGGER update_timestamp ON employees ...`.
+  - **Oracle**: `CREATE TRIGGER update_timestamp ...`.
+  - **MySQL**: `CREATE TRIGGER update_timestamp BEFORE UPDATE ON employees ...`.
+- **Scope**: Tied to a specific table/view; schema-qualified if needed (e.g., `hr.update_timestamp`).
+
+----------------------------------------------------
+Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 21 so far, up to `DROP PROCEDURE` (command #21), so now we’ll tackle command #22: `CREATE TRIGGER`. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 12 commands left after this.
+
+---
+
+### SQL Command #22: `CREATE TRIGGER`
+
+The `CREATE TRIGGER` command defines a trigger in the database. A trigger is a stored procedure that automatically executes in response to specific events (e.g., `INSERT`, `UPDATE`, `DELETE`) on a table or view. It’s a Data Definition Language (DDL) command used for enforcing rules, logging changes, or automating tasks.
+
+#### Syntax:
+```sql
+CREATE [OR REPLACE] TRIGGER trigger_name
+{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]
+ON table_name
+[FOR EACH ROW | FOR EACH STATEMENT]
+[WHEN (condition)]
+EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)
+```
+
+- **`trigger_name`**: Name of the trigger.
+- **`BEFORE | AFTER | INSTEAD OF`**: When the trigger fires relative to the event.
+- **`INSERT | UPDATE | DELETE | TRUNCATE`**: Event(s) triggering the action.
+- **`ON table_name`**: Target table or view.
+- **`FOR EACH ROW | FOR EACH STATEMENT`**: Granularity of execution.
+- **`WHEN (condition)`**: Optional; filters when the trigger fires.
+- **`EXECUTE PROCEDURE | FUNCTION`**: The procedure/function to run.
+
+#### Key Points:
+1. **Purpose**: Automates actions tied to table events (e.g., logging updates).
+2. **Types**: Row-level (per row) or statement-level (per operation).
+3. **Support**: Common in PostgreSQL, Oracle, SQL Server; MySQL supports with limits.
+4. **Execution**: Triggered automatically; no direct call needed.
+
+---
+
+### Components (Pseudo-Clauses)
+`CREATE TRIGGER` has multiple parts I’ll treat as "clauses" for clarity:
+1. **`CREATE [OR REPLACE] TRIGGER trigger_name`**: Core definition and name.
+2. **`{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`**: Timing and events.
+3. **`ON table_name`**: Target table.
+4. **`FOR EACH ROW | FOR EACH STATEMENT`**: Execution scope.
+5. **`WHEN (condition)`**: Optional condition.
+6. **`EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)`**: Action to perform.
+
+I’ll start with the first component now.
+
+---
+
+### Clause #1: `CREATE [OR REPLACE] TRIGGER trigger_name`
+
+#### Description:
+- **Purpose**: Initiates the trigger creation and assigns it a unique name within the schema or table scope.
+- **Mandatory**: Yes; the command’s foundation.
+- **Components**:
+  - `CREATE TRIGGER`: Starts the trigger definition.
+  - `OR REPLACE`: Optional; overwrites an existing trigger with the same name.
+  - `trigger_name`: Unique name for the trigger.
+
+#### Keywords:
+1. **`CREATE`**:
+   - **Meaning**: Instructs the DBMS to create a new object (here, a trigger).
+   - **Use**: Begins the DDL operation.
+   - **Context**: Standard DDL keyword (e.g., `CREATE PROCEDURE`).
+
+2. **`OR`** (in `OR REPLACE`):
+   - **Meaning**: Combines with `REPLACE` to allow overwriting.
+   - **Use**: Conditions creation on replacing an existing trigger.
+   - **Context**: Logical operator for redefinition.
+
+3. **`REPLACE`** (in `OR REPLACE`):
+   - **Meaning**: Overwrites an existing trigger without requiring a `DROP`.
+   - **Use**: Simplifies updates to trigger logic.
+   - **Context**: Common in DDL (e.g., `CREATE OR REPLACE PROCEDURE`).
+
+4. **`TRIGGER`**:
+   - **Meaning**: Specifies that the object is a trigger.
+   - **Use**: Differentiates from `FUNCTION`, `PROCEDURE`, etc.
+   - **Context**: Targets an event-driven routine.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+```
+
+**Basic Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Clause Breakdown**:
+  - **`CREATE`**: Starts the trigger creation.
+  - **`TRIGGER`**: Specifies a trigger.
+  - **`update_timestamp`**: Names the trigger.
+- **Action**: Defines a trigger (full logic later); here, it’s incomplete without the function but shows the clause.
+- **Result**: Trigger `update_timestamp` is set up (assuming `set_timestamp` exists).
+
+**With OR REPLACE**:
+```sql
+CREATE OR REPLACE TRIGGER update_timestamp
+BEFORE UPDATE ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Explanation**:
+  - **`OR REPLACE`**: Overwrites `update_timestamp` if it exists.
+  - Updates the trigger definition without dropping it first.
+- **Result**: Ensures the latest trigger logic is applied.
+
+---
+
+### Notes:
+- **Naming**: 
+  - Unique per table or schema (depends on DBMS).
+  - Descriptive (e.g., `log_salary_change`).
+- **Database Variations**:
+  - **PostgreSQL**: `CREATE TRIGGER update_timestamp ...`.
+  - **SQL Server**: `CREATE TRIGGER update_timestamp ON employees ...`.
+  - **Oracle**: `CREATE TRIGGER update_timestamp ...`.
+  - **MySQL**: `CREATE TRIGGER update_timestamp BEFORE UPDATE ON employees ...`.
+- **Scope**: Tied to a specific table/view; schema-qualified if needed (e.g., `hr.update_timestamp`).
+
+--------------------------------------------------
+                    Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered the first "clause" (`CREATE [OR REPLACE] TRIGGER trigger_name`), so now we’ll move to the second component: `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
+
+---
+
+### Clause #2: `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`
+
+#### Description:
+- **Purpose**: Specifies *when* the trigger fires (before, after, or instead of the event) and *what* database events (e.g., insert, update, delete) cause it to execute. This defines the trigger’s timing and the operations it responds to.
+- **Mandatory**: Yes; a trigger must be tied to specific events and timing.
+- **Components**:
+  - `{BEFORE | AFTER | INSTEAD OF}`: Timing relative to the event.
+  - `{INSERT | UPDATE | DELETE | TRUNCATE}`: The triggering event(s).
+  - `[OR ...]`: Optional; combines multiple events (e.g., `INSERT OR UPDATE`).
+
+#### Keywords:
+1. **`BEFORE`**:
+   - **Meaning**: The trigger executes before the event (e.g., before a row is updated).
+   - **Use**: Allows modification of data or validation before the operation completes.
+   - **Context**: Common for enforcing rules (e.g., setting defaults).
+
+2. **`AFTER`**:
+   - **Meaning**: The trigger executes after the event (e.g., after a row is inserted).
+   - **Use**: Suitable for logging or cascading actions post-operation.
+   - **Context**: Used for audit trails or side effects.
+
+3. **`INSTEAD OF`**:
+   - **Meaning**: The trigger replaces the event entirely (e.g., custom logic instead of an insert).
+   - **Use**: Often used with views to make them updatable.
+   - **Context**: Less common; specific to views or complex scenarios.
+
+4. **`INSERT`**:
+   - **Meaning**: Trigger fires on row insertion.
+   - **Use**: Responds to `INSERT` statements.
+   - **Context**: For initializing data or logging additions.
+
+5. **`UPDATE`**:
+   - **Meaning**: Trigger fires on row updates.
+   - **Use**: Responds to `UPDATE` statements.
+   - **Context**: For tracking changes or enforcing constraints.
+
+6. **`DELETE`**:
+   - **Meaning**: Trigger fires on row deletion.
+   - **Use**: Responds to `DELETE` statements.
+   - **Context**: For archiving or cleanup.
+
+7. **`TRUNCATE`** (DBMS-specific):
+   - **Meaning**: Trigger fires on table truncation.
+   - **Use**: Responds to `TRUNCATE TABLE` (rare).
+   - **Context**: Limited support (e.g., PostgreSQL).
+
+8. **`OR`**:
+   - **Meaning**: Combines multiple events.
+   - **Use**: Allows one trigger to handle multiple operations (e.g., `INSERT OR UPDATE`).
+   - **Context**: Logical operator for event lists.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+
+CREATE FUNCTION set_timestamp() 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    NEW.last_updated := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+```
+
+**BEFORE UPDATE Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Clause Breakdown**:
+  - **`BEFORE`**: Trigger fires before the `UPDATE` operation.
+  - **`UPDATE`**: Trigger responds to `UPDATE` statements on `employees`.
+- **Action**: 
+  - Calls `set_timestamp()` to set `last_updated` before saving the row.
+- **Usage**: 
+  ```sql
+  INSERT INTO employees VALUES (1, 50000, NULL);
+  UPDATE employees SET salary = 51000 WHERE employee_id = 1;
+  SELECT * FROM employees;
+  ```
+  - **Result**: 
+    ```
+    employee_id | salary | last_updated
+    ------------+--------+---------------------
+    1           | 51000  | 2025-04-14 12:00:00
+    ```
+
+**AFTER INSERT OR UPDATE Example**:
+```sql
+CREATE TRIGGER log_changes
+AFTER INSERT OR UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION log_salary_change();
+```
+- **Clause Breakdown**:
+  - **`AFTER`**: Trigger fires after the event.
+  - **`INSERT OR UPDATE`**: Trigger responds to `INSERT` or `UPDATE`.
+  - **`OR`**: Combines the events.
+- **Action**: 
+  - Calls `log_salary_change()` (assumed function) to log changes post-operation.
+
+**INSTEAD OF Example (View, PostgreSQL)**:
+```sql
+CREATE VIEW emp_view AS SELECT employee_id, salary FROM employees;
+
+CREATE TRIGGER instead_insert
+INSTEAD OF INSERT
+ON emp_view
+FOR EACH ROW
+EXECUTE FUNCTION handle_view_insert();
+```
+- **Clause Breakdown**:
+  - **`INSTEAD OF`**: Replaces the `INSERT` on the view.
+  - **`INSERT`**: Trigger responds to `INSERT` attempts.
+- **Action**: 
+  - Calls `handle_view_insert()` to handle custom insert logic.
+
+---
+
+### Notes:
+- **Timing**:
+  - `BEFORE`: Modify data before commit (e.g., set defaults).
+  - `AFTER`: React to committed changes (e.g., log).
+  - `INSTEAD OF`: Override default behavior (e.g., for views).
+- **Events**:
+  - Combine with `OR` (e.g., `INSERT OR UPDATE OR DELETE`).
+  - `TRUNCATE` rare; not all DBMSs support it.
+- **Database Variations**:
+  - **PostgreSQL**: `BEFORE UPDATE`, `AFTER INSERT OR UPDATE`, `INSTEAD OF`.
+  - **SQL Server**: `AFTER INSERT, UPDATE`, `INSTEAD OF` (no `BEFORE`).
+    ```sql
+    CREATE TRIGGER update_timestamp ON employees AFTER UPDATE AS BEGIN ... END;
+    ```
+  - **Oracle**: `BEFORE UPDATE`, `AFTER INSERT`, `INSTEAD OF`.
+  - **MySQL**: `BEFORE UPDATE`, `AFTER INSERT` (no `INSTEAD OF`).
+- **Scope**: Specific to one table/view.
+
+------------------------------------
+Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name` and `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, so now we’ll move to the third component: `ON table_name`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
+
+---
+
+### Clause #3: `ON table_name`
+
+#### Description:
+- **Purpose**: Specifies the table or view that the trigger is associated with. The trigger will fire in response to events (e.g., `INSERT`, `UPDATE`) on this table or view.
+- **Mandatory**: Yes; a trigger must be tied to a specific table or view to define its scope.
+- **Components**:
+  - `ON`: Indicates the target of the trigger.
+  - `table_name`: The name of the table or view (e.g., `employees`).
+
+#### Keyword:
+1. **`ON`**:
+   - **Meaning**: Links the trigger to a specific table or view where events are monitored.
+   - **Use**: Defines the context for the trigger’s events (e.g., `UPDATE ON employees`).
+   - **Context**: Used in triggers and joins (e.g., `FROM table1 JOIN table2 ON ...`); here, it binds the trigger to an object.
+
+#### Component:
+- **`table_name`**:
+   - **Meaning**: The specific table or view the trigger monitors.
+   - **Use**: Identifies where `INSERT`, `UPDATE`, `DELETE`, etc., events occur.
+   - **Context**: Must exist in the database; can be schema-qualified (e.g., `hr.employees`).
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+
+CREATE FUNCTION set_timestamp() 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    NEW.last_updated := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+```
+
+**Basic Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Clause Breakdown**:
+  - **`ON`**: Ties the trigger to a table.
+  - **`employees`**: Specifies the `employees` table as the target.
+- **Action**: 
+  - The trigger fires before `UPDATE` events on the `employees` table.
+  - Calls `set_timestamp()` to set `last_updated`.
+- **Usage**: 
+  ```sql
+  INSERT INTO employees VALUES (1, 50000, NULL);
+  UPDATE employees SET salary = 51000 WHERE employee_id = 1;
+  SELECT * FROM employees;
+  ```
+  - **Result**: 
+    ```
+    employee_id | salary | last_updated
+    ------------+--------+---------------------
+    1           | 51000  | 2025-04-14 12:00:00
+    ```
+
+**With Schema-Qualified Table**:
+```sql
+CREATE SCHEMA hr;
+CREATE TABLE hr.employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL
+);
+
+CREATE TRIGGER salary_check
+BEFORE INSERT
+ON hr.employees
+FOR EACH ROW
+EXECUTE FUNCTION check_salary();
+```
+- **Explanation**:
+  - **`ON hr.employees`**: Targets the `employees` table in the `hr` schema.
+  - Trigger fires for `INSERT` events on `hr.employees`.
+
+**On a View (INSTEAD OF)**:
+```sql
+CREATE VIEW emp_view AS SELECT employee_id, salary FROM employees;
+
+CREATE TRIGGER instead_insert
+INSTEAD OF INSERT
+ON emp_view
+FOR EACH ROW
+EXECUTE FUNCTION handle_view_insert();
+```
+- **Explanation**:
+  - **`ON emp_view`**: Targets the `emp_view` view.
+  - Trigger replaces `INSERT` operations on the view.
+
+---
+
+### Notes:
+- **Table vs. View**:
+  - **Tables**: Most common; support `BEFORE`/`AFTER` triggers.
+  - **Views**: Typically `INSTEAD OF` triggers for custom logic.
+- **Database Variations**:
+  - **PostgreSQL**: `ON employees` (table or view).
+  - **SQL Server**: `ON employees` (no schema in simple form).
+    ```sql
+    CREATE TRIGGER update_timestamp ON employees AFTER UPDATE AS BEGIN ... END;
+    ```
+  - **Oracle**: `ON employees` (schema-qualified if needed).
+  - **MySQL**: `ON employees` (no views for triggers).
+- **Scope**: 
+  - One trigger per table/view for specific events.
+  - Schema-qualified for clarity (e.g., `hr.employees`).
+
+---
+-----------------------------------------------------------\
+Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name`, `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, and `ON table_name`, so now we’ll move to the fourth component: `FOR EACH ROW | FOR EACH STATEMENT`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
+
+---
+
+### Clause #4: `FOR EACH ROW | FOR EACH STATEMENT`
+
+#### Description:
+- **Purpose**: Specifies the granularity at which the trigger executes—either for each affected row (`FOR EACH ROW`) or once per triggering statement (`FOR EACH STATEMENT`). This determines whether the trigger processes individual rows or the entire operation.
+- **Mandatory**: Yes in some DBMSs (e.g., PostgreSQL requires explicit choice); optional in others where a default applies (e.g., SQL Server assumes `FOR EACH ROW`).
+- **Components**:
+  - `FOR EACH ROW`: Trigger fires for every row affected by the event.
+  - `FOR EACH STATEMENT`: Trigger fires once for the entire statement, regardless of rows affected.
+
+#### Keywords:
+1. **`FOR`**:
+   - **Meaning**: Introduces the scope or frequency of the trigger’s execution.
+   - **Use**: Sets up the context for how the trigger processes events.
+   - **Context**: Used in triggers to define granularity; also appears in loops (e.g., PL/SQL).
+
+2. **`EACH`**:
+   - **Meaning**: Emphasizes the iterative nature of the trigger’s execution (per row or statement).
+   - **Use**: Clarifies the unit of execution.
+   - **Context**: Specific to triggers in this form.
+
+3. **`ROW`**:
+   - **Meaning**: Specifies that the trigger processes each individual row affected by the event.
+   - **Use**: Enables row-level logic (e.g., modifying row data, accessing `NEW`/`OLD`).
+   - **Context**: Common for detailed operations.
+
+4. **`STATEMENT`**:
+   - **Meaning**: Specifies that the trigger executes once for the entire triggering statement.
+   - **Use**: Suitable for summary actions (e.g., logging the event itself).
+   - **Context**: Less common; used for bulk operations.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+
+CREATE FUNCTION set_timestamp() 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    NEW.last_updated := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+```
+
+**FOR EACH ROW Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Clause Breakdown**:
+  - **`FOR EACH ROW`**: The trigger fires for every row updated in `employees`.
+- **Action**: 
+  - For each updated row, `set_timestamp()` sets `last_updated` to the current time.
+- **Usage**: 
+  ```sql
+  INSERT INTO employees VALUES (1, 50000, NULL), (2, 60000, NULL);
+  UPDATE employees SET salary = salary + 1000;
+  SELECT * FROM employees;
+  ```
+  - **Result**: 
+    ```
+    employee_id | salary | last_updated
+    ------------+--------+---------------------
+    1           | 51000  | 2025-04-14 12:00:00
+    2           | 61000  | 2025-04-14 12:00:00
+    ```
+  - Trigger runs twice (once per row).
+
+**FOR EACH STATEMENT Example (PostgreSQL)**:
+```sql
+CREATE FUNCTION log_update_event() 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    INSERT INTO audit_log (event, event_time) 
+    VALUES ('UPDATE on employees', CURRENT_TIMESTAMP);
+    RETURN NULL;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+
+CREATE TRIGGER log_update
+AFTER UPDATE
+ON employees
+FOR EACH STATEMENT
+EXECUTE FUNCTION log_update_event();
+```
+- **Clause Breakdown**:
+  - **`FOR EACH STATEMENT`**: The trigger fires once per `UPDATE` statement.
+- **Action**: 
+  - Logs a single entry in `audit_log` for the entire update, regardless of rows affected.
+- **Usage**: 
+  ```sql
+  UPDATE employees SET salary = salary + 1000;
+  SELECT * FROM audit_log;
+  ```
+  - **Result**: 
+    ```
+    event               | event_time
+    --------------------+---------------------
+    UPDATE on employees | 2025-04-14 12:00:00
+    ```
+  - Trigger runs once, even if multiple rows are updated.
+
+---
+
+### Notes:
+- **Row vs. Statement**:
+  - **FOR EACH ROW**: Access to `NEW`/`OLD` (row data); used for per-row logic (e.g., modify values).
+  - **FOR EACH STATEMENT**: No row access; used for global actions (e.g., logging the event).
+- **Database Variations**:
+  - **PostgreSQL**: Explicit `FOR EACH ROW` or `FOR EACH STATEMENT`.
+  - **SQL Server**: Implicitly `FOR EACH ROW` (no statement-level triggers in simple form).
+    ```sql
+    CREATE TRIGGER update_timestamp ON employees AFTER UPDATE AS BEGIN ... END;
+    ```
+  - **Oracle**: `FOR EACH ROW` explicit; statement-level is default if omitted.
+    ```sql
+    CREATE TRIGGER update_timestamp BEFORE UPDATE ON employees FOR EACH ROW ...
+    ```
+  - **MySQL**: `FOR EACH ROW` only (no statement-level triggers).
+- **Default**: 
+  - PostgreSQL requires specification.
+  - Others may assume `FOR EACH ROW`.
+
+-------------------------------------------------------------
+Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name`, `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, `ON table_name`, and `FOR EACH ROW | FOR EACH STATEMENT`, so now we’ll move to the fifth component: `WHEN (condition)`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
+
+---
+
+### Clause #5: `WHEN (condition)`
+
+#### Description:
+- **Purpose**: Specifies an optional condition that must be true for the trigger to execute. It filters when the trigger fires, allowing fine-grained control beyond the event type (e.g., only fire for specific row changes).
+- **Mandatory**: No; optional. If omitted, the trigger fires for all qualifying events.
+- **Components**:
+  - `WHEN`: Introduces the conditional expression.
+  - `(condition)`: A boolean expression evaluated for each row or statement (typically row-level).
+
+#### Keywords:
+1. **`WHEN`**:
+   - **Meaning**: Introduces a condition that governs trigger execution.
+   - **Use**: Restricts the trigger to cases where the condition evaluates to `TRUE`.
+   - **Context**: Used in triggers and other SQL constructs (e.g., `CASE WHEN`).
+
+#### Component:
+- **`(condition)`**:
+   - **Meaning**: A boolean expression (e.g., `NEW.salary > OLD.salary`).
+   - **Use**: Determines whether the trigger’s action runs for a given row or event.
+   - **Context**: Often uses `NEW` (new row data) or `OLD` (old row data) for row-level triggers.
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+
+CREATE FUNCTION log_salary_increase() 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    INSERT INTO salary_log (employee_id, old_salary, new_salary, change_time)
+    VALUES (NEW.employee_id, OLD.salary, NEW.salary, CURRENT_TIMESTAMP);
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+
+CREATE TABLE salary_log (
+    employee_id INT,
+    old_salary DECIMAL,
+    new_salary DECIMAL,
+    change_time TIMESTAMP
+);
+```
+
+**WHEN Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER log_salary_increase
+AFTER UPDATE
+ON employees
+FOR EACH ROW
+WHEN (NEW.salary > OLD.salary)
+EXECUTE FUNCTION log_salary_increase();
+```
+- **Clause Breakdown**:
+  - **`WHEN`**: Introduces the condition.
+  - **`(NEW.salary > OLD.salary)`**: Trigger fires only if the updated salary is higher than the original.
+- **Action**: 
+  - For each updated row, checks if `NEW.salary > OLD.salary`.
+  - If true, calls `log_salary_increase()` to log the change.
+- **Usage**: 
+  ```sql
+  INSERT INTO employees VALUES (1, 50000, NULL);
+  UPDATE employees SET salary = 51000 WHERE employee_id = 1; -- Triggers
+  UPDATE employees SET salary = 50000 WHERE employee_id = 1; -- No trigger
+  SELECT * FROM salary_log;
+  ```
+  - **Result**: 
+    ```
+    employee_id | old_salary | new_salary | change_time
+    ------------+------------+------------+---------------------
+    1           | 50000      | 51000      | 2025-04-14 12:00:00
+    ```
+  - Only logs increases, not decreases.
+
+**Without WHEN**:
+```sql
+CREATE TRIGGER log_all_changes
+AFTER UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION log_salary_increase();
+```
+- **Explanation**: 
+  - No `WHEN`; trigger fires for all `UPDATE`s.
+  - Logs both increases and decreases.
+
+---
+
+### Notes:
+- **Scope**:
+  - **Row-Level**: `WHEN` uses `NEW`/`OLD` to compare row data (e.g., `NEW.salary != OLD.salary`).
+  - **Statement-Level**: Rare; `WHEN` may not apply or uses aggregates (DBMS-specific).
+- **Database Variations**:
+  - **PostgreSQL**: `WHEN (NEW.salary > OLD.salary)` for row-level triggers.
+  - **SQL Server**: No `WHEN`; use `IF` in the trigger body.
+    ```sql
+    CREATE TRIGGER log_salary_increase ON employees AFTER UPDATE
+    AS BEGIN
+        IF EXISTS (SELECT * FROM inserted i JOIN deleted d ON i.employee_id = d.employee_id WHERE i.salary > d.salary)
+        INSERT INTO salary_log ...
+    END;
+    ```
+  - **Oracle**: `WHEN (NEW.salary > :OLD.salary)` (note `:OLD` syntax).
+  - **MySQL**: No `WHEN`; conditionals in the body.
+    ```sql
+    CREATE TRIGGER log_salary_increase AFTER UPDATE ON employees
+    FOR EACH ROW
+    BEGIN
+        IF NEW.salary > OLD.salary THEN
+            INSERT INTO salary_log ...;
+        END IF;
+    END;
+    ```
+- **Performance**: 
+  - `WHEN` reduces unnecessary trigger executions.
+  - Better than body-level conditionals in some cases.
+
+------------------------------------
+Let’s proceed to the final component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name`, `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, `ON table_name`, `FOR EACH ROW | FOR EACH STATEMENT`, and `WHEN (condition)`, so now we’ll tackle the sixth component: `EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
+
+---
+
+### Clause #6: `EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)`
+
+#### Description:
+- **Purpose**: Specifies the action the trigger performs by calling a stored procedure or function when the trigger fires. This defines what happens in response to the triggering event (e.g., logging, updating data).
+- **Mandatory**: Yes; a trigger must execute some logic to be meaningful.
+- **Components**:
+  - `EXECUTE`: Indicates the invocation of a routine.
+  - `PROCEDURE | FUNCTION`: Specifies the type of routine (varies by DBMS).
+  - `procedure_name`: The name of the procedure/function to call.
+  - `(arguments)`: Optional; parameters passed to the routine.
+
+#### Keywords:
+1. **`EXECUTE`**:
+   - **Meaning**: Instructs the DBMS to run the specified routine.
+   - **Use**: Links the trigger to its actionable logic.
+   - **Context**: Used in triggers and some procedural calls (e.g., `EXECUTE sp_name` in SQL Server).
+
+2. **`PROCEDURE`**:
+   - **Meaning**: Identifies the routine as a stored procedure.
+   - **Use**: Specifies that the trigger calls a procedure (common in older PostgreSQL or Oracle).
+   - **Context**: Less common in modern PostgreSQL (uses `FUNCTION`).
+
+3. **`FUNCTION`**:
+   - **Meaning**: Identifies the routine as a function.
+   - **Use**: Specifies that the trigger calls a function (standard in PostgreSQL).
+   - **Context**: Functions often return values (e.g., `NEW` for `BEFORE` triggers).
+
+---
+
+### Example and Explanation
+**Setup**:
+```sql
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    salary DECIMAL,
+    last_updated TIMESTAMP
+);
+
+CREATE FUNCTION set_timestamp() 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    NEW.last_updated := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+```
+
+**Basic Example (PostgreSQL)**:
+```sql
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION set_timestamp();
+```
+- **Clause Breakdown**:
+  - **`EXECUTE`**: Initiates the call to the routine.
+  - **`FUNCTION`**: Specifies a function (not a procedure).
+  - **`set_timestamp()`**: Names the function to execute, no arguments.
+- **Action**: 
+  - For each row updated in `employees`, calls `set_timestamp()` to set `last_updated`.
+- **Usage**: 
+  ```sql
+  INSERT INTO employees VALUES (1, 50000, NULL);
+  UPDATE employees SET salary = 51000 WHERE employee_id = 1;
+  SELECT * FROM employees;
+  ```
+  - **Result**: 
+    ```
+    employee_id | salary | last_updated
+    ------------+--------+---------------------
+    1           | 51000  | 2025-04-14 12:00:00
+    ```
+
+**With Arguments (PostgreSQL)**:
+```sql
+CREATE FUNCTION log_salary_change(emp_id INT, old_salary DECIMAL) 
+RETURNS TRIGGER 
+AS $$
+BEGIN
+    INSERT INTO salary_log (employee_id, old_salary, change_time)
+    VALUES (emp_id, old_salary, CURRENT_TIMESTAMP);
+    RETURN NULL;
+END;
+$$ 
+LANGUAGE PLPGSQL;
+
+CREATE TRIGGER log_salary
+AFTER UPDATE
+ON employees
+FOR EACH ROW
+EXECUTE FUNCTION log_salary_change(NEW.employee_id, OLD.salary);
+```
+- **Clause Breakdown**:
+  - **`EXECUTE FUNCTION`**: Calls the function.
+  - **`log_salary_change(NEW.employee_id, OLD.salary)`**: Passes `employee_id` and `old_salary` as arguments.
+- **Action**: 
+  - Logs the old salary to `salary_log` after updates.
+- **Result**: 
+  - After `UPDATE employees SET salary = 52000 WHERE employee_id = 1;`:
+    ```
+    employee_id | old_salary | change_time
+    ------------+------------+---------------------
+    1           | 51000      | 2025-04-14 12:01:00
+    ```
+
+---
+
+### Database Variations
+1. **SQL Server**:
+   ```sql
+   CREATE TRIGGER update_timestamp 
+   ON employees 
+   AFTER UPDATE 
+   AS 
+   BEGIN
+       UPDATE employees 
+       SET last_updated = GETDATE()
+       FROM inserted 
+       WHERE employees.employee_id = inserted.employee_id;
+   END;
+   ```
+   - No `EXECUTE`; logic is inline, not a separate procedure/function.
+
+2. **Oracle**:
+   ```sql
+   CREATE TRIGGER update_timestamp
+   BEFORE UPDATE ON employees
+   FOR EACH ROW
+   BEGIN
+       :NEW.last_updated := SYSTIMESTAMP;
+   END;
+   ```
+   - No `EXECUTE`; body is inline (`BEGIN ... END`).
+
+3. **MySQL**:
+   ```sql
+   CREATE TRIGGER update_timestamp
+   BEFORE UPDATE ON employees
+   FOR EACH ROW
+   SET NEW.last_updated = NOW();
+   ```
+   - No `EXECUTE`; logic is directly in the trigger.
+
+4. **PostgreSQL (Older Syntax)**:
+   ```sql
+   CREATE TRIGGER log_salary
+   AFTER UPDATE ON employees
+   FOR EACH ROW
+   EXECUTE PROCEDURE log_salary_change();
+   ```
+   - Uses `PROCEDURE` (deprecated; `FUNCTION` is modern).
+
+---
+
+### Notes:
+- **Procedure vs. Function**:
+  - PostgreSQL: `FUNCTION` (returns `TRIGGER` type); `PROCEDURE` is legacy.
+  - Others: Inline logic (no separate routine).
+- **Arguments**:
+  - Use `NEW`/`OLD` for row data or literal values.
+  - Match the called routine’s signature.
+- **Performance**: 
+  - Separate functions allow reuse.
+  - Inline logic (SQL Server, MySQL) is simpler but less modular.
