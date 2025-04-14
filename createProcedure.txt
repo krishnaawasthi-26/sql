@@ -1,1 +1,380 @@
+SQL Command #20: `CREATE PROCEDURE`
+
+The `CREATE PROCEDURE` command defines a stored procedure in the database. Stored procedures encapsulate reusable logic (e.g., multiple SQL statements, control flow) that can be executed with a single call. It’s a Data Definition Language (DDL) command, often used for complex operations that don’t necessarily return a value (unlike functions).
+
+Syntax:
+```sql
+CREATE [OR REPLACE] PROCEDURE procedure_name (parameters)
+[LANGUAGE language_name]
+AS
+$$
+    procedure_body
+$$;
+```
+
+- **`procedure_name`**: Name of the procedure.
+- **`parameters`**: Input/output arguments (optional).
+- **`LANGUAGE language_name`**: Optional; specifies the programming language (e.g., `SQL`, `PLPGSQL`).
+- **`AS $$ ... $$`**: Defines the procedure’s logic.
+
+#### Key Points:
+1. **Purpose**: Creates a stored procedure for executing predefined operations.
+2. **vs. Function**: Procedures don’t return values directly (though they can via `OUT` parameters); functions do.
+3. **Support**: Common in PostgreSQL, SQL Server, Oracle; MySQL supports with slight differences.
+4. **Execution**: Called with `CALL procedure_name(args)` or `EXEC` (varies by DBMS).
+
+---
+
+### Components (Pseudo-Clauses)
+`CREATE PROCEDURE` is a single command but has distinct parts I’ll treat as "clauses":
+1. **`CREATE [OR REPLACE] PROCEDURE procedure_name (parameters)`**: Core definition and name.
+2. **`LANGUAGE language_name`**: Optional language specification.
+3. **`AS $$ procedure_body $$`**: Logic implementation.
+
+I’ll start with the first component now.
+
+---
+
+### Clause #1: `CREATE [OR REPLACE] PROCEDURE procedure_name (parameters)`
+
+#### Description:
+- **Purpose**: Initiates the procedure creation, names it, and defines its input/output parameters.
+- **Mandatory**: Yes; the command’s foundation.
+- **Components**:
+  - `CREATE PROCEDURE`: Starts the procedure definition.
+  - `OR REPLACE`: Optional; overwrites an existing procedure.
+  - `procedure_name`: Unique name for the procedure.
+  - `(parameters)`: Optional; arguments with names, types, and modes (e.g., `IN`, `OUT`).
+
+#### Keywords:
+1. **`CREATE`**:
+   - **Meaning**: Instructs the DBMS to create a new object (here, a procedure).
+   - **Use**: Begins the DDL operation.
+   - **Context**: Standard DDL keyword (e.g., `CREATE FUNCTION`).
+
+2. **`OR`** (in `OR REPLACE`):
+   - **Meaning**: Combines with `REPLACE` to allow overwriting.
+   - **Use**: Conditions creation on replacing an existing procedure.
+   - **Context**: Logical operator for redefinition.
+
+3. **`REPLACE`** (in `OR REPLACE`):
+   - **Meaning**: Overwrites an existing procedure with the same name.
+   - **Use**: Updates the procedure without requiring a `DROP`.
+   - **Context**: Common in DDL (e.g., `CREATE OR REPLACE FUNCTION`).
+
+4. **`PROCEDURE`**:
+   - **Meaning**: Specifies that the object is a stored procedure.
+   - **Use**: Differentiates from `FUNCTION`, `TABLE`, etc.
+   - **Context**: Targets a callable routine.
+
+---
+
+### Example and Explanation
+**Basic Example (PostgreSQL)**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+$$;
+```
+- **Clause Breakdown**:
+  - **`CREATE`**: Starts the procedure creation.
+  - **`PROCEDURE`**: Specifies a procedure.
+  - **`update_salary`**: Names the procedure.
+  - **`(emp_id INT, increase DECIMAL)`**: Defines two parameters: `emp_id` (integer), `increase` (decimal).
+- **Action**: Creates a procedure to increase an employee’s salary.
+- **Usage**: 
+  ```sql
+  CALL update_salary(1, 1000.00);
+  ```
+
+**With OR REPLACE**:
+```sql
+CREATE OR REPLACE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase * 1.1 WHERE employee_id = emp_id;
+$$;
+```
+- **Explanation**:
+  - **`OR REPLACE`**: Overwrites the previous `update_salary` if it exists.
+  - New logic applies a 10% bonus to the increase.
+- **Result**: Updates the procedure; `CALL update_salary(1, 1000.00)` now adds 1100.
+
+**With OUT Parameter (PostgreSQL)**:
+```sql
+CREATE PROCEDURE get_employee_salary(emp_id IN INT, sal OUT DECIMAL)
+LANGUAGE SQL
+AS $$
+    SELECT salary INTO sal FROM employees WHERE employee_id = emp_id;
+$$;
+```
+- **Explanation**: 
+  - **`emp_id IN INT`**: Input parameter.
+  - **`sal OUT DECIMAL`**: Output parameter.
+- **Usage**: 
+  ```sql
+  CALL get_employee_salary(1, NULL);
+  ```
+
+---
+
+### Notes:
+- **Parameters**: 
+  - Modes: `IN` (input, default), `OUT` (output), `INOUT` (both).
+  - Can be empty: `CREATE PROCEDURE no_args()`.
+- **Database Variations**:
+  - **PostgreSQL**: As shown; uses `CALL`.
+  - **SQL Server**: `CREATE PROCEDURE dbo.update_salary @emp_id INT, @increase DECIMAL AS BEGIN ... END;`.
+  - **Oracle**: `CREATE PROCEDURE update_salary(emp_id IN NUMBER, increase IN NUMBER) AS BEGIN ... END;`.
+  - **MySQL**: `CREATE PROCEDURE update_salary(IN emp_id INT, IN increase DECIMAL) BEGIN ... END;`.
+- **Scope**: Schema-specific (e.g., `hr.update_salary`).
+
+------------------------------------------------------------------------------
+
+### Clause #2: `LANGUAGE language_name`
+
+#### Description:
+- **Purpose**: Specifies the programming language used to write the stored procedure’s logic. This tells the DBMS how to interpret and execute the procedure’s body.
+- **Mandatory**: No; optional in some systems where a default language (e.g., SQL or the DBMS’s native language) is assumed. However, explicitly stating it is common for clarity.
+- **Components**:
+  - `LANGUAGE`: Declares that the language is being specified.
+  - `language_name`: The specific language (e.g., `SQL`, `PLPGSQL`, `TSQL`, `PLSQL`).
+
+#### Keyword:
+1. **`LANGUAGE`**:
+   - **Meaning**: Indicates the programming language of the procedure’s implementation.
+   - **Use**: Guides the DBMS on how to parse and run the code (e.g., SQL for queries, PL/pgSQL for procedural logic).
+   - **Context**: Used in `CREATE FUNCTION` and `CREATE PROCEDURE` to support multiple languages.
+
+#### Component:
+- **`language_name`**:
+   - **Meaning**: The name of the language (e.g., `SQL`, `PLPGSQL`, `TSQL`, `PLSQL`).
+   - **Use**: Matches the syntax and capabilities of the procedure’s body.
+   - **Context**: Varies by DBMS; common options include SQL (standard) or procedural extensions.
+
+---
+
+### Example and Explanation
+**SQL Language Example (PostgreSQL)**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+$$;
+```
+- **Clause Breakdown**:
+  - **`LANGUAGE`**: Specifies the language.
+  - **`SQL`**: Indicates the body uses plain SQL (a single `UPDATE` statement).
+- **Action**: 
+  - Defines a procedure that updates an employee’s salary.
+- **Usage**: 
+  ```sql
+  CALL update_salary(1, 1000.00);
+  ```
+  - **Result**: Increases salary by 1000 for `employee_id = 1`.
+
+**PL/pgSQL Language Example (PostgreSQL)**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    IF increase > 0 THEN
+        UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+    ELSE
+        RAISE EXCEPTION 'Increase must be positive';
+    END IF;
+END;
+$$;
+```
+- **Clause Breakdown**:
+  - **`LANGUAGE`**: Specifies the language.
+  - **`PLPGSQL`**: Uses PostgreSQL’s procedural language for control structures.
+- **Action**: 
+  - Checks if `increase` is positive before updating; raises an error otherwise.
+- **Usage**: 
+  ```sql
+  CALL update_salary(1, 1000.00);  -- Succeeds
+  CALL update_salary(1, -100.00);  -- Fails with error
+  ```
+
+---
+
+### Database Variations
+1. **SQL Server (T-SQL)**:
+   ```sql
+   CREATE PROCEDURE dbo.update_salary @emp_id INT, @increase DECIMAL
+   AS
+   BEGIN
+       UPDATE employees SET salary = salary + @increase WHERE employee_id = @emp_id;
+   END;
+   ```
+   - No explicit `LANGUAGE` (T-SQL is assumed).
+
+2. **Oracle (PL/SQL)**:
+   ```sql
+   CREATE PROCEDURE update_salary(emp_id IN NUMBER, increase IN NUMBER)
+   AS
+   BEGIN
+       UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+   END;
+   ```
+   - No `LANGUAGE` clause (PL/SQL implied).
+
+3. **MySQL**:
+   ```sql
+   CREATE PROCEDURE update_salary(IN emp_id INT, IN increase DECIMAL)
+   BEGIN
+       UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+   END;
+   ```
+   - No `LANGUAGE` (SQL assumed; limited procedural support).
+
+---
+
+### Notes:
+- **Languages**: 
+  - `SQL`: Simple queries (portable but limited).
+  - `PLPGSQL` (PostgreSQL), `TSQL` (SQL Server), `PLSQL` (Oracle): Procedural logic (loops, conditionals).
+  - Others: `C`, `Python` (PostgreSQL extensions).
+- **Default**: 
+  - PostgreSQL: Requires `LANGUAGE` (often `SQL` or `PLPGSQL`).
+  - SQL Server/Oracle/MySQL: Implicit native language.
+- **Impact**: Determines available features (e.g., `IF` statements require procedural languages).
+
+------------------------------------------------------------------------------
+
+Let’s proceed to the final component of the `CREATE PROCEDURE` command! We’ve covered `CREATE [OR REPLACE] PROCEDURE procedure_name (parameters)` and `LANGUAGE language_name`, so now we’ll tackle the third "clause": `AS $$ procedure_body $$`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #20 of the 33 total commands. We have 13 commands left after this.
+
+---
+
+### Clause #3: `AS $$ procedure_body $$`
+
+#### Description:
+- **Purpose**: Defines the actual logic of the stored procedure—what it does when called. This is the executable code, ranging from simple SQL statements to complex procedural logic, depending on the language specified.
+- **Mandatory**: Yes; a procedure must have a body to perform an action.
+- **Components**:
+  - `AS`: Introduces the procedure’s implementation.
+  - `$$ ... $$`: Delimiters enclosing the code (PostgreSQL-specific; varies by DBMS).
+  - `procedure_body`: The SQL or procedural code executed by the procedure.
+
+#### Keyword:
+1. **`AS`**:
+   - **Meaning**: Indicates that the following text is the procedure’s executable logic.
+   - **Use**: Links the procedure’s definition (name, parameters) to its implementation.
+   - **Context**: Common in DDL for defining bodies (e.g., `CREATE FUNCTION ... AS`, `CREATE VIEW ... AS`).
+
+#### Components:
+- **`$$ ... $$`**:
+   - **Meaning**: Marks the start and end of the procedure body (PostgreSQL convention).
+   - **Use**: Separates the code from the rest of the SQL statement.
+   - **Context**: Alternatives include `BEGIN ... END` (SQL Server, MySQL, Oracle) or quotes.
+
+- **`procedure_body`**:
+   - **Meaning**: The code that runs when the procedure is called.
+   - **Use**: Implements the desired operations (e.g., updates, inserts, control flow).
+   - **Context**: Depends on the `LANGUAGE` (e.g., SQL for queries, PL/pgSQL for loops).
+
+---
+
+### Example and Explanation
+**Simple SQL Procedure (PostgreSQL)**:
+```sql
+CREATE PROCEDURE update_salary(emp_id INT, increase DECIMAL)
+LANGUAGE SQL
+AS $$
+    UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+$$;
+```
+- **Clause Breakdown**:
+  - **`AS`**: Introduces the body.
+  - **`$$ ... $$`**: Encloses the logic (`UPDATE ...`).
+  - **`procedure_body`**: A single `UPDATE` statement that increases an employee’s salary.
+- **Action**: Updates the salary for the given `emp_id`.
+- **Usage**: 
+  ```sql
+  CALL update_salary(1, 1000.00);
+  ```
+  - **Result**: Adds 1000 to the salary of `employee_id = 1`.
+
+**PL/pgSQL Procedure with Logic (PostgreSQL)**:
+```sql
+CREATE PROCEDURE update_salary(emp_id IN INT, increase IN DECIMAL, success OUT BOOLEAN)
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+    IF increase <= 0 THEN
+        success := FALSE;
+        RAISE NOTICE 'Increase must be positive';
+    ELSE
+        UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+        IF FOUND THEN
+            success := TRUE;
+        ELSE
+            success := FALSE;
+        END IF;
+    END IF;
+END;
+$$;
+```
+- **Clause Breakdown**:
+  - **`AS`**: Starts the body.
+  - **`$$ ... $$`**: Encloses the procedural code.
+  - **`procedure_body`**: 
+    - Checks if `increase` is positive.
+    - Updates salary if valid; sets `success` based on whether the update occurred.
+    - Uses `FOUND` to check if rows were affected.
+- **Usage**: 
+  ```sql
+  CALL update_salary(1, 1000.00, NULL);  -- success = TRUE
+  CALL update_salary(1, -100.00, NULL);  -- success = FALSE
+  ```
+
+---
+
+### Database Variations
+1. **SQL Server (T-SQL)**:
+   ```sql
+   CREATE PROCEDURE dbo.update_salary @emp_id INT, @increase DECIMAL
+   AS
+   BEGIN
+       UPDATE employees SET salary = salary + @increase WHERE employee_id = @emp_id;
+   END;
+   ```
+   - **`AS BEGIN ... END`**: Defines the body; no `$$`.
+
+2. **Oracle (PL/SQL)**:
+   ```sql
+   CREATE PROCEDURE update_salary(emp_id IN NUMBER, increase IN NUMBER)
+   AS
+   BEGIN
+       UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+   END;
+   ```
+   - **`AS BEGIN ... END`**: Encloses the logic.
+
+3. **MySQL**:
+   ```sql
+   CREATE PROCEDURE update_salary(IN emp_id INT, IN increase DECIMAL)
+   BEGIN
+       UPDATE employees SET salary = salary + increase WHERE employee_id = emp_id;
+   END;
+   ```
+   - **`BEGIN ... END`**: Defines the body.
+
+---
+
+### Notes:
+- **Body Content**: 
+  - SQL: Simple statements (e.g., `INSERT`, `UPDATE`).
+  - Procedural (PL/pgSQL, T-SQL, PL/SQL): Conditionals, loops, error handling.
+- **Delimiters**: 
+  - PostgreSQL: `$$` (or custom, e.g., `$body$...$body$`).
+  - Others: `BEGIN ... END` or none.
+- **Execution**: No direct return value; use `OUT` parameters for results.
+
+-----------------------------------------
 
