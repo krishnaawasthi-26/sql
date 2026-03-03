@@ -1,39 +1,37 @@
-### Clause #9: `OWNED BY table_name.column_name`
+Clause #9: OWNED BY table_name.column_name
 
-#### Description:
-- **Purpose**: Binds the sequence to a specific table column, so the sequence is automatically dropped if the table or column is dropped. This creates a dependency, making the sequence "owned" by the column (useful for auto-increment IDs).
-- **Mandatory**: No; optional. If omitted, the sequence is independent (manual management needed).
-- **Components**:
-  - `OWNED BY`: Establishes the ownership link.
-  - `table_name.column_name`: The table and column (e.g., `employees.employee_id`).
+Description:
+Purpose: Binds the sequence to a specific table column, so the sequence is automatically dropped if the table or column is dropped. This creates a dependency, making the sequence "owned" by the column (useful for auto-increment IDs).
+Mandatory: No; optional. If omitted, the sequence is independent (manual management needed).
+Components:
+OWNED BY: Establishes the ownership link.
+table_name.column_name: The table and column (e.g., employees.employee_id).
 
-#### Keywords:
-1. **`OWNED`**:
-   - **Meaning**: Indicates the sequence is tied to a column's lifecycle.
-   - **Use**: Automates cleanup (e.g., drop sequence when column is dropped).
-   - **Context**: Specific to sequences in PostgreSQL.
+Keywords:
+OWNED:
+Meaning: Indicates the sequence is tied to a column's lifecycle.
+Use: Automates cleanup (e.g., drop sequence when column is dropped).
+Context: Specific to sequences in PostgreSQL.
 
-2. **`BY`**:
-   - **Meaning**: Specifies the owner (the column).
-   - **Use**: Links to the column's name.
-   - **Context**: Common in SQL for ownership (e.g., `GROUP BY`).
+BY:
+Meaning: Specifies the owner (the column).
+Use: Links to the column's name.
+Context: Common in SQL for ownership (e.g., GROUP BY).
 
-#### Components:
-- **`table_name.column_name`**:
-   - **Meaning**: The qualified column name.
-   - **Use**: Defines the dependency (column must use the sequence via `DEFAULT nextval`).
-   - **Context**: Column gets default values from the sequence.
+Components:
+table_name.column_name:
+Meaning: The qualified column name.
+Use: Defines the dependency (column must use the sequence via DEFAULT nextval).
+Context: Column gets default values from the sequence.
 
-- **`OWNED BY NONE`** (in `ALTER SEQUENCE`):
-   - **Meaning**: Removes ownership.
-   - **Use**: Makes the sequence independent.
-   - **Context**: Not in `CREATE` but for modification.
+OWNED BY NONE (in ALTER SEQUENCE):
+Meaning: Removes ownership.
+Use: Makes the sequence independent.
+Context: Not in CREATE but for modification.
 
----
 
-### Example and Explanation
-**Basic Example with OWNED BY (PostgreSQL)**:
-```sql
+Example and Explanation
+Basic Example with OWNED BY (PostgreSQL):
 CREATE SEQUENCE employee_id_seq START WITH 1000;
 
 CREATE TABLE employees (
@@ -42,55 +40,43 @@ CREATE TABLE employees (
 );
 
 ALTER SEQUENCE employee_id_seq OWNED BY employees.employee_id;
-```
-- **Clause Breakdown**:
-  - **`OWNED BY`**: Ties the sequence to the column.
-  - **`employees.employee_id`**: Specifies the owning column.
-- **Action**: 
-  - Sequence is dependent on `employees.employee_id`.
-  - Dropping `employees` or `employee_id` drops `employee_id_seq`.
-- **Usage**: 
-  ```sql
+Clause Breakdown:
+OWNED BY: Ties the sequence to the column.
+employees.employee_id: Specifies the owning column.
+Action: 
+Sequence is dependent on employees.employee_id.
+Dropping employees or employee_id drops employee_id_seq.
+Usage: 
   INSERT INTO employees (name) VALUES ('Alice');
   SELECT * FROM employees;
-  ```
-  - **Result**: 
-    ```
+Result: 
     employee_id | name
     ------------+------
     1000        | Alice
-    ```
-  - `DROP TABLE employees;` also drops `employee_id_seq`.
+DROP TABLE employees; also drops employee_id_seq.
 
-**Independent Sequence**:
-```sql
+Independent Sequence:
 CREATE SEQUENCE standalone_seq START WITH 1;
-```
-- **Explanation**: 
-  - No `OWNED BY`; sequence remains if the table is dropped.
-  - Manual `DROP SEQUENCE standalone_seq` needed.
-
----
-
-### Notes:
-- **Behavior**:
-  - **OWNED BY**: Syncs lifecycle; useful for IDs.
-  - Independent: Flexible but requires separate management.
-- **Constraints**:
-  - Column must exist and use `nextval`.
-  - Only one column can own a sequence.
-- **Database Variations**:
-  - **PostgreSQL**: `OWNED BY employees.employee_id` (via `CREATE` or `ALTER`).
-  - **SQL Server**: No `OWNED BY`; sequences are standalone.
-  - **Oracle**: No `OWNED BY`; sequences are independent.
-  - **MySQL**: No sequences; `AUTO_INCREMENT` is column-bound.
-- **Use Case**: 
-  - `OWNED BY`: Clean up with table drops.
-  - No ownership: Shared sequences.
-
----
-
-This covers the ninth component (`OWNED BY table_name.column_name`) and its keywords (`OWNED`, `BY`)! We’ve now fully broken down `CREATE SEQUENCE` (command #24). Say "next" to move to command #25 (`DROP SEQUENCE`), or let me know if you want a summary or more on this clause! We’ve got 9 commands left.
+Explanation: 
+No OWNED BY; sequence remains if the table is dropped.
+Manual DROP SEQUENCE standalone_seq needed.
 
 
+Notes:
+Behavior:
+OWNED BY: Syncs lifecycle; useful for IDs.
+Independent: Flexible but requires separate management.
+Constraints:
+Column must exist and use nextval.
+Only one column can own a sequence.
+Database Variations:
+PostgreSQL: OWNED BY employees.employee_id (via CREATE or ALTER).
+SQL Server: No OWNED BY; sequences are standalone.
+Oracle: No OWNED BY; sequences are independent.
+MySQL: No sequences; AUTO_INCREMENT is column-bound.
+Use Case: 
+OWNED BY: Clean up with table drops.
+No ownership: Shared sequences.
 
+
+This covers the ninth component (OWNED BY table_name.column_name) and its keywords (OWNED, BY)! We’ve now fully broken down CREATE SEQUENCE (command #24). Say "next" to move to command #25 (DROP SEQUENCE), or let me know if you want a summary or more on this clause! We’ve got 9 commands left.

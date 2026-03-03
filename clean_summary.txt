@@ -1,0 +1,7 @@
+sql notes concise repository summary
+
+covers core ddl commands create alter and drop for database schema table view index sequence function procedure and trigger
+covers core dml commands insert select update delete and merge
+focuses on purpose minimal syntax important warnings and short examples
+highlights portability differences between postgresql mysql sql server oracle and sqlite
+emphasizes safety use where clauses verify dependencies and test schema changes before production use
