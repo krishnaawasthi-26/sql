@@ -1,352 +1,297 @@
-Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 25 so far, up to `DROP SEQUENCE` (command #25), so now we’ll tackle command #26: `CREATE INDEX`. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 8 commands left after this.
+Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 25 so far, up to DROP SEQUENCE (command #25), so now we’ll tackle command #26: CREATE INDEX. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 8 commands left after this.
 
----
 
-### SQL Command #26: `CREATE INDEX`
+SQL Command #26: CREATE INDEX
 
-The `CREATE INDEX` command creates an index on one or more columns of a table to improve query performance, particularly for `SELECT`, `WHERE`, `JOIN`, and `ORDER BY` operations. It’s a Data Definition Language (DDL) command that optimizes data retrieval by enabling faster lookups.
+The CREATE INDEX command creates an index on one or more columns of a table to improve query performance, particularly for SELECT, WHERE, JOIN, and ORDER BY operations. It’s a Data Definition Language (DDL) command that optimizes data retrieval by enabling faster lookups.
 
-#### Syntax:
-```sql
+Syntax:
 CREATE [UNIQUE] INDEX [CONCURRENTLY] [index_name]
 ON table_name [USING method]
 (column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression))
 [INCLUDE (column_name [, ...])]
 [WHERE predicate]
 [WITH (storage_parameter = value [, ...])];
-```
 
-- **`UNIQUE`**: Optional; enforces unique values in the indexed column(s).
-- **`CONCURRENTLY`**: Optional; builds the index without locking the table (PostgreSQL).
-- **`index_name`**: Name of the index (optional in some DBMSs).
-- **`ON table_name`**: Specifies the target table.
-- **`USING method`**: Optional; index type (e.g., `BTREE`, `HASH`).
-- **`(column_name | expression)`**: Columns or expressions to index.
-- **`INCLUDE`**: Optional; non-key columns to include (SQL Server, PostgreSQL).
-- **`WHERE`**: Optional; partial index for a subset of rows.
-- **`WITH`**: Optional; storage parameters (e.g., fill factor).
+UNIQUE: Optional; enforces unique values in the indexed column(s).
+CONCURRENTLY: Optional; builds the index without locking the table (PostgreSQL).
+index_name: Name of the index (optional in some DBMSs).
+ON table_name: Specifies the target table.
+USING method: Optional; index type (e.g., BTREE, HASH).
+(column_name | expression): Columns or expressions to index.
+INCLUDE: Optional; non-key columns to include (SQL Server, PostgreSQL).
+WHERE: Optional; partial index for a subset of rows.
+WITH: Optional; storage parameters (e.g., fill factor).
 
-#### Key Points:
-1. **Purpose**: Speeds up queries by creating a data structure (e.g., B-tree) for fast lookups.
-2. **Trade-Off**: Improves read performance but slows writes (inserts, updates, deletes).
-3. **Support**: Common in PostgreSQL, SQL Server, Oracle, MySQL.
-4. **Automatic**: Some indexes are created implicitly (e.g., for `PRIMARY KEY`).
+Key Points:
+Purpose: Speeds up queries by creating a data structure (e.g., B-tree) for fast lookups.
+Trade-Off: Improves read performance but slows writes (inserts, updates, deletes).
+Support: Common in PostgreSQL, SQL Server, Oracle, MySQL.
+Automatic: Some indexes are created implicitly (e.g., for PRIMARY KEY).
 
----
 
-### Components (Pseudo-Clauses)
-`CREATE INDEX` has multiple parts I’ll treat as "clauses" for clarity:
-1. **`CREATE [UNIQUE] INDEX [CONCURRENTLY] [index_name]`**: Core definition and name.
-2. **`ON table_name [USING method]`**: Target table and index type.
-3. **`(column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression))`**: Indexed columns or expressions.
-4. **`INCLUDE (column_name [, ...])`**: Non-key columns (optional).
-5. **`WHERE predicate`**: Partial index condition.
-6. **`WITH (storage_parameter = value [, ...])`**: Storage options.
+Components (Pseudo-Clauses)
+CREATE INDEX has multiple parts I’ll treat as "clauses" for clarity:
+CREATE [UNIQUE] INDEX [CONCURRENTLY] [index_name]: Core definition and name.
+ON table_name [USING method]: Target table and index type.
+(column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression)): Indexed columns or expressions.
+INCLUDE (column_name [, ...]): Non-key columns (optional).
+WHERE predicate: Partial index condition.
+WITH (storage_parameter = value [, ...]): Storage options.
 
 I’ll start with the first component now.
 
----
 
-### Clause #1: `CREATE [UNIQUE] INDEX [CONCURRENTLY] [index_name]`
+Clause #1: CREATE [UNIQUE] INDEX [CONCURRENTLY] [index_name]
 
-#### Description:
-- **Purpose**: Initiates the index creation, specifies if it enforces uniqueness, allows concurrent creation, and assigns a name.
-- **Mandatory**: `CREATE INDEX` is required; `index_name` is optional (auto-generated if omitted).
-- **Components**:
-  - `CREATE INDEX`: Starts the index definition.
-  - `UNIQUE`: Optional; ensures no duplicate values in the indexed column(s).
-  - `CONCURRENTLY`: Optional; builds the index without locking the table (PostgreSQL).
-  - `index_name`: Name of the index (e.g., `idx_employees_name`).
+Description:
+Purpose: Initiates the index creation, specifies if it enforces uniqueness, allows concurrent creation, and assigns a name.
+Mandatory: CREATE INDEX is required; index_name is optional (auto-generated if omitted).
+Components:
+CREATE INDEX: Starts the index definition.
+UNIQUE: Optional; ensures no duplicate values in the indexed column(s).
+CONCURRENTLY: Optional; builds the index without locking the table (PostgreSQL).
+index_name: Name of the index (e.g., idx_employees_name).
 
-#### Keywords:
-1. **`CREATE`**:
-   - **Meaning**: Instructs the DBMS to create a new object (here, an index).
-   - **Use**: Begins the DDL operation.
-   - **Context**: Standard DDL keyword (e.g., `CREATE TABLE`).
+Keywords:
+CREATE:
+Meaning: Instructs the DBMS to create a new object (here, an index).
+Use: Begins the DDL operation.
+Context: Standard DDL keyword (e.g., CREATE TABLE).
 
-2. **`UNIQUE`**:
-   - **Meaning**: Enforces uniqueness for the indexed column(s).
-   - **Use**: Prevents duplicate values, like a unique constraint.
-   - **Context**: Also used in `CREATE TABLE` constraints.
+UNIQUE:
+Meaning: Enforces uniqueness for the indexed column(s).
+Use: Prevents duplicate values, like a unique constraint.
+Context: Also used in CREATE TABLE constraints.
 
-3. **`INDEX`**:
-   - **Meaning**: Specifies that the object is an index.
-   - **Use**: Differentiates from `TABLE`, `SEQUENCE`, etc.
-   - **Context**: Targets a performance-enhancing structure.
+INDEX:
+Meaning: Specifies that the object is an index.
+Use: Differentiates from TABLE, SEQUENCE, etc.
+Context: Targets a performance-enhancing structure.
 
-4. **`CONCURRENTLY`** (PostgreSQL-specific):
-   - **Meaning**: Builds the index without locking the table.
-   - **Use**: Allows writes during index creation (slower but safer for production).
-   - **Context**: Unique to PostgreSQL for minimal downtime.
+CONCURRENTLY (PostgreSQL-specific):
+Meaning: Builds the index without locking the table.
+Use: Allows writes during index creation (slower but safer for production).
+Context: Unique to PostgreSQL for minimal downtime.
 
----
 
-### Example and Explanation
-**Setup**:
-```sql
+Example and Explanation
+Setup:
 CREATE TABLE employees (
     employee_id INT PRIMARY KEY,
     name VARCHAR(100),
     department VARCHAR(50)
 );
-```
 
-**Basic Example (PostgreSQL)**:
-```sql
+Basic Example (PostgreSQL):
 CREATE INDEX idx_employees_name ON employees (name);
-```
-- **Clause Breakdown**:
-  - **`CREATE`**: Starts the index creation.
-  - **`INDEX`**: Specifies an index.
-  - **`idx_employees_name`**: Names the index.
-- **Action**: 
-  - Creates a B-tree index (default) on the `name` column.
-- **Result**: 
-  - Speeds up queries like `SELECT * FROM employees WHERE name = 'Alice';`.
-  - No uniqueness enforced.
+Clause Breakdown:
+CREATE: Starts the index creation.
+INDEX: Specifies an index.
+idx_employees_name: Names the index.
+Action: 
+Creates a B-tree index (default) on the name column.
+Result: 
+Speeds up queries like SELECT * FROM employees WHERE name = 'Alice';.
+No uniqueness enforced.
 
-**UNIQUE Index**:
-```sql
+UNIQUE Index:
 CREATE UNIQUE INDEX idx_employees_name_unique ON employees (name);
-```
-- **Explanation**:
-  - **`UNIQUE`**: Ensures no duplicate `name` values.
-  - Fails if duplicates exist (e.g., two 'Alice' rows).
-- **Result**: 
-  - Enforces uniqueness; speeds up lookups.
+Explanation:
+UNIQUE: Ensures no duplicate name values.
+Fails if duplicates exist (e.g., two 'Alice' rows).
+Result: 
+Enforces uniqueness; speeds up lookups.
 
-**CONCURRENTLY (PostgreSQL)**:
-```sql
+CONCURRENTLY (PostgreSQL):
 CREATE INDEX CONCURRENTLY idx_employees_dept ON employees (department);
-```
-- **Explanation**:
-  - **`CONCURRENTLY`**: Builds the index without locking `employees`.
-  - Allows `INSERT`/`UPDATE` during creation.
-- **Result**: 
-  - Index created with minimal disruption.
+Explanation:
+CONCURRENTLY: Builds the index without locking employees.
+Allows INSERT/UPDATE during creation.
+Result: 
+Index created with minimal disruption.
 
-**No Name Specified (DBMS-specific)**:
-```sql
+No Name Specified (DBMS-specific):
 CREATE INDEX ON employees (name);
-```
-- **Explanation**: 
-  - DBMS auto-generates a name (e.g., `employees_name_idx` in PostgreSQL).
-  - Less explicit but functional.
+Explanation: 
+DBMS auto-generates a name (e.g., employees_name_idx in PostgreSQL).
+Less explicit but functional.
 
----
 
-### Notes:
-- **Naming**: 
-  - Convention: `idx_table_column` (e.g., `idx_employees_name`).
-  - Schema-qualified if needed (e.g., `hr.idx_employees_name`).
-- **Database Variations**:
-  - **PostgreSQL**: `CREATE UNIQUE INDEX CONCURRENTLY idx_name ...`.
-  - **SQL Server**: `CREATE UNIQUE INDEX idx_name ...` (no `CONCURRENTLY`).
-    ```sql
+Notes:
+Naming: 
+Convention: idx_table_column (e.g., idx_employees_name).
+Schema-qualified if needed (e.g., hr.idx_employees_name).
+Database Variations:
+PostgreSQL: CREATE UNIQUE INDEX CONCURRENTLY idx_name ....
+SQL Server: CREATE UNIQUE INDEX idx_name ... (no CONCURRENTLY).
     CREATE INDEX idx_employees_name ON employees (name);
-    ```
-  - **Oracle**: `CREATE UNIQUE INDEX idx_name ...` (no `CONCURRENTLY`).
-  - **MySQL**: `CREATE UNIQUE INDEX idx_name ...`.
-- **UNIQUE**: 
-  - Similar to a `UNIQUE` constraint but doesn’t appear in table definition.
-  - Implicitly created for `PRIMARY KEY`/`UNIQUE` constraints.
+Oracle: CREATE UNIQUE INDEX idx_name ... (no CONCURRENTLY).
+MySQL: CREATE UNIQUE INDEX idx_name ....
+UNIQUE: 
+Similar to a UNIQUE constraint but doesn’t appear in table definition.
+Implicitly created for PRIMARY KEY/UNIQUE constraints.
 
----
-### Clause #2: `ON table_name [USING method]`
+Clause #2: ON table_name [USING method]
 
-#### Description:
-- **Purpose**: Specifies the table to index and, optionally, the type of index structure (e.g., B-tree, hash) to use for storage and querying. This clause defines the target of the index and its underlying method.
-- **Mandatory**: `ON table_name` is required; `USING method` is optional (defaults to B-tree in most DBMSs).
-- **Components**:
-  - `ON`: Indicates the table being indexed.
-  - `table_name`: The name of the table.
-  - `USING`: Optional; specifies the index method.
-  - `method`: The index type (e.g., `BTREE`, `HASH`, `GIN`).
+Description:
+Purpose: Specifies the table to index and, optionally, the type of index structure (e.g., B-tree, hash) to use for storage and querying. This clause defines the target of the index and its underlying method.
+Mandatory: ON table_name is required; USING method is optional (defaults to B-tree in most DBMSs).
+Components:
+ON: Indicates the table being indexed.
+table_name: The name of the table.
+USING: Optional; specifies the index method.
+method: The index type (e.g., BTREE, HASH, GIN).
 
-#### Keywords:
-1. **`ON`**:
-   - **Meaning**: Links the index to a specific table.
-   - **Use**: Defines the scope of the index (columns from this table).
-   - **Context**: Common in DDL (e.g., `CREATE TRIGGER ON table_name`).
+Keywords:
+ON:
+Meaning: Links the index to a specific table.
+Use: Defines the scope of the index (columns from this table).
+Context: Common in DDL (e.g., CREATE TRIGGER ON table_name).
 
-2. **`USING`**:
-   - **Meaning**: Introduces the index method or structure.
-   - **Use**: Allows choosing a non-default index type for specialized queries.
-   - **Context**: Specific to `CREATE INDEX`; not used in other DDL like `CREATE TABLE`.
+USING:
+Meaning: Introduces the index method or structure.
+Use: Allows choosing a non-default index type for specialized queries.
+Context: Specific to CREATE INDEX; not used in other DDL like CREATE TABLE.
 
-#### Components:
-- **`table_name`**:
-   - **Meaning**: The table containing the columns to index.
-   - **Use**: The index applies to this table’s data.
-   - **Context**: Can be schema-qualified (e.g., `hr.employees`).
+Components:
+table_name:
+Meaning: The table containing the columns to index.
+Use: The index applies to this table’s data.
+Context: Can be schema-qualified (e.g., hr.employees).
 
-- **`method`**:
-   - **Meaning**: The index algorithm (e.g., `BTREE` for sorted lookups, `HASH` for equality checks).
-   - **Use**: Optimizes for specific query patterns (e.g., `GIN` for JSON search).
-   - **Context**: Defaults to `BTREE` (balanced tree for ranges and equality).
+method:
+Meaning: The index algorithm (e.g., BTREE for sorted lookups, HASH for equality checks).
+Use: Optimizes for specific query patterns (e.g., GIN for JSON search).
+Context: Defaults to BTREE (balanced tree for ranges and equality).
 
----
 
-### Example and Explanation
-**Setup**:
-```sql
+Example and Explanation
+Setup:
 CREATE TABLE employees (
     employee_id INT PRIMARY KEY,
     name VARCHAR(100),
     department VARCHAR(50),
     salary DECIMAL
 );
-```
 
-**Basic Example (PostgreSQL)**:
-```sql
+Basic Example (PostgreSQL):
 CREATE INDEX idx_employees_name ON employees (name);
-```
-- **Clause Breakdown**:
-  - **`ON`**: Targets the `employees` table.
-  - **`employees`**: Specifies the table to index.
-- **Action**: 
-  - Creates a B-tree index (default) on the `name` column.
-- **Result**: 
-  - Speeds up `SELECT * FROM employees WHERE name = 'Alice';`.
-  - No method specified; uses `BTREE`.
+Clause Breakdown:
+ON: Targets the employees table.
+employees: Specifies the table to index.
+Action: 
+Creates a B-tree index (default) on the name column.
+Result: 
+Speeds up SELECT * FROM employees WHERE name = 'Alice';.
+No method specified; uses BTREE.
 
-**With USING Method**:
-```sql
+With USING Method:
 CREATE INDEX idx_employees_salary_hash ON employees USING HASH (salary);
-```
-- **Clause Breakdown**:
-  - **`ON employees`**: Targets `employees`.
-  - **`USING HASH`**: Specifies a hash index for equality checks (faster for `salary = 50000` but not ranges).
-- **Action**: 
-  - Creates a hash index on `salary`.
-- **Result**: 
-  - Optimizes `SELECT * FROM employees WHERE salary = 50000;`.
-  - Not suitable for `salary > 40000` (use `BTREE` for ranges).
+Clause Breakdown:
+ON employees: Targets employees.
+USING HASH: Specifies a hash index for equality checks (faster for salary = 50000 but not ranges).
+Action: 
+Creates a hash index on salary.
+Result: 
+Optimizes SELECT * FROM employees WHERE salary = 50000;.
+Not suitable for salary > 40000 (use BTREE for ranges).
 
-**Schema-Qualified Table**:
-```sql
+Schema-Qualified Table:
 CREATE INDEX idx_hr_employees_name ON hr.employees (name);
-```
-- **Explanation**:
-  - **`ON hr.employees`**: Indexes the `employees` table in the `hr` schema.
+Explanation:
+ON hr.employees: Indexes the employees table in the hr schema.
 
----
 
-### Notes:
-- **Table Requirements**:
-  - `table_name` must exist.
-  - Schema-qualified for multi-schema databases (e.g., `public.employees`).
-- **Index Methods**:
-  - **`BTREE`**: Default; for equality, ranges, sorting.
-  - **`HASH`**: Equality only; faster for exact matches.
-  - **`GIN`**: Full-text search, arrays (PostgreSQL).
-  - **`GiST`**: Geometric data (PostgreSQL).
-- **Database Variations**:
-  - **PostgreSQL**: `ON employees USING HASH (salary);`.
-  - **SQL Server**: `ON employees` (method implied; `HASH` supported).
-    ```sql
+Notes:
+Table Requirements:
+table_name must exist.
+Schema-qualified for multi-schema databases (e.g., public.employees).
+Index Methods:
+BTREE: Default; for equality, ranges, sorting.
+HASH: Equality only; faster for exact matches.
+GIN: Full-text search, arrays (PostgreSQL).
+GiST: Geometric data (PostgreSQL).
+Database Variations:
+PostgreSQL: ON employees USING HASH (salary);.
+SQL Server: ON employees (method implied; HASH supported).
     CREATE INDEX idx_employees_name ON employees (name);
-    ```
-  - **Oracle**: `ON employees` (method like `BITMAP` or `B-TREE`).
-  - **MySQL**: `ON employees` (method like `BTREE` default).
-- **Default**: B-tree for most DBMSs; no lock on table during creation (but concurrent options vary).
+Oracle: ON employees (method like BITMAP or B-TREE).
+MySQL: ON employees (method like BTREE default).
+Default: B-tree for most DBMSs; no lock on table during creation (but concurrent options vary).
 
----
 
-This covers the second component (`ON table_name [USING method]`) of `CREATE INDEX` and its keywords (`ON`, `USING`)! Say "next" to move to the third component (`(column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression))`), or let me know if you want more here! We’re still on command #26.
+This covers the second component (ON table_name [USING method]) of CREATE INDEX and its keywords (ON, USING)! Say "next" to move to the third component ((column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression))), or let me know if you want more here! We’re still on command #26.
 
 
 
 Yes, let's continue!
 
-### Clause #3: `(column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression))`
+Clause #3: (column_name [ASC | DESC] [NULLS {FIRST | LAST}] [, ...] | (expression))
 
-#### Description:
-- **Purpose**: This is the heart of the index — it defines **which columns** (or expressions) are indexed and in what **order**. The DBMS uses this information to build the index structure (usually a B-tree) that allows fast searching, sorting, and joining on those columns/expressions.
-- **Mandatory**: Yes — every index must index at least one column or expression.
-- **Components**:
-  - `column_name`: Simple column name (most common)
-  - `[ASC | DESC]`: Sort direction of the column in the index (optional)
-  - `[NULLS {FIRST | LAST}]`: Where NULL values are placed in the index order (PostgreSQL-specific, optional)
-  - `[, ...]`: Multiple columns = composite/multi-column index
-  - `(expression)`: Functional index on a computed value (advanced)
+Description:
+Purpose: This is the heart of the index — it defines which columns (or expressions) are indexed and in what order. The DBMS uses this information to build the index structure (usually a B-tree) that allows fast searching, sorting, and joining on those columns/expressions.
+Mandatory: Yes — every index must index at least one column or expression.
+Components:
+column_name: Simple column name (most common)
+[ASC | DESC]: Sort direction of the column in the index (optional)
+[NULLS {FIRST | LAST}]: Where NULL values are placed in the index order (PostgreSQL-specific, optional)
+[, ...]: Multiple columns = composite/multi-column index
+(expression): Functional index on a computed value (advanced)
 
-#### Important Keywords & Options:
+Important Keywords & Options:
 
 | Keyword/Option     | Meaning                                                                 | Use Case / When to Use                                                                 | Default       | DBMS Support                     |
 |---------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------|----------------|----------------------------------|
-| `ASC`               | Index column in **ascending** order                                     | Most common — matches typical `ORDER BY col ASC` queries                                 | Yes (default)  | All                              |
-| `DESC`              | Index column in **descending** order                                    | Speeds up `ORDER BY col DESC`, `LIMIT 1` (latest record), or reverse scans               | No             | PostgreSQL, SQL Server, Oracle   |
-| `NULLS FIRST`       | NULL values appear **before** non-NULL in the index                     | When you frequently filter/sort with `ORDER BY col NULLS FIRST`                          | No             | PostgreSQL only                  |
-| `NULLS LAST`        | NULL values appear **after** non-NULL                                   | Default in most databases — matches `ORDER BY col NULLS LAST`                            | Yes (PostgreSQL) | PostgreSQL only                |
-| `(expression)`      | Index on a computed expression (not a raw column)                       | Index on `LOWER(name)`, `YEAR(order_date)`, `price * quantity`, etc.                     | —              | PostgreSQL, Oracle, SQL Server (filtered/functional) |
+| ASC               | Index column in ascending order                                     | Most common — matches typical ORDER BY col ASC queries                                 | Yes (default)  | All                              |
+| DESC              | Index column in descending order                                    | Speeds up ORDER BY col DESC, LIMIT 1 (latest record), or reverse scans               | No             | PostgreSQL, SQL Server, Oracle   |
+| NULLS FIRST       | NULL values appear before non-NULL in the index                     | When you frequently filter/sort with ORDER BY col NULLS FIRST                          | No             | PostgreSQL only                  |
+| NULLS LAST        | NULL values appear after non-NULL                                   | Default in most databases — matches ORDER BY col NULLS LAST                            | Yes (PostgreSQL) | PostgreSQL only                |
+| (expression)      | Index on a computed expression (not a raw column)                       | Index on LOWER(name), YEAR(order_date), price * quantity, etc.                     | —              | PostgreSQL, Oracle, SQL Server (filtered/functional) |
 
----
 
-### Real-World Examples
+Real-World Examples
 
-#### 1. Basic single-column index
-```sql
+Basic single-column index
 CREATE INDEX idx_employees_name ON employees (name);
-```
-- Indexes `name` in **ascending** order
-- Speeds up: `WHERE name = 'Krishna'`, `ORDER BY name`
+Indexes name in ascending order
+Speeds up: WHERE name = 'Krishna', ORDER BY name
 
-#### 2. Descending index
-```sql
+Descending index
 CREATE INDEX idx_orders_order_date_desc 
 ON orders (order_date DESC);
-```
-- Very useful for:
-  - `ORDER BY order_date DESC LIMIT 10` (recent orders)
-  - `WHERE order_date > '2025-01-01' ORDER BY order_date DESC`
+Very useful for:
+ORDER BY order_date DESC LIMIT 10 (recent orders)
+WHERE order_date > '2025-01-01' ORDER BY order_date DESC
 
-#### 3. Composite (multi-column) index
-```sql
+Composite (multi-column) index
 CREATE INDEX idx_employees_dept_salary 
 ON employees (department ASC, salary DESC);
-```
-- Useful for:
-  - `WHERE department = 'Engineering' ORDER BY salary DESC`
-  - `WHERE department = 'Sales' AND salary > 80000`
+Useful for:
+WHERE department = 'Engineering' ORDER BY salary DESC
+WHERE department = 'Sales' AND salary > 80000
 
-#### 4. Functional / Expression index (PostgreSQL)
-```sql
+Functional / Expression index (PostgreSQL)
 CREATE INDEX idx_employees_lower_name 
 ON employees (LOWER(name));
-```
-- Speeds up case-insensitive search:
-  ```sql
+Speeds up case-insensitive search:
   SELECT * FROM employees WHERE LOWER(name) = 'krishna';
-  ```
 
-#### 5. NULLS LAST (PostgreSQL)
-```sql
+NULLS LAST (PostgreSQL)
 CREATE INDEX idx_employees_salary_nulls_last 
 ON employees (salary NULLS LAST);
-```
-- Helps queries like:
-  ```sql
+Helps queries like:
   SELECT * FROM employees ORDER BY salary NULLS LAST;
-  ```
   → employees with salary get shown first, NULLs at the end.
 
----
 
-### Quick Summary Table – When to use what
+Quick Summary Table – When to use what
 
 | Goal / Query Pattern                              | Recommended Index Clause                                 | Why?                                                                 |
 |---------------------------------------------------|----------------------------------------------------------|----------------------------------------------------------------------|
-| Equality search (`WHERE name = 'Krishna'`)        | `(name)`                                                 | B-tree works great                                                   |
-| Sort descending (`ORDER BY created_at DESC`)      | `(created_at DESC)`                                      | Avoids extra sort step                                               |
-| Case-insensitive search                           | `(LOWER(name))`                                          | Functional index matches the query expression                        |
-| Multi-condition + sort                            | `(department ASC, salary DESC)`                          | Composite index covers both filter and sort                          |
-| NULLs should come last in sort                    | `(salary NULLS LAST)`                                    | Matches `ORDER BY salary NULLS LAST` (PostgreSQL only)               |
-| Recent records first                              | `(created_at DESC)`                                      | Very common for feeds, logs, orders                                  |
-
----
-
-
-
-
+| Equality search (WHERE name = 'Krishna')        | (name)                                                 | B-tree works great                                                   |
+| Sort descending (ORDER BY created_at DESC)      | (created_at DESC)                                      | Avoids extra sort step                                               |
+| Case-insensitive search                           | (LOWER(name))                                          | Functional index matches the query expression                        |
+| Multi-condition + sort                            | (department ASC, salary DESC)                          | Composite index covers both filter and sort                          |
+| NULLs should come last in sort                    | (salary NULLS LAST)                                    | Matches ORDER BY salary NULLS LAST (PostgreSQL only)               |
+| Recent records first                              | (created_at DESC)                                      | Very common for feeds, logs, orders                                  |
