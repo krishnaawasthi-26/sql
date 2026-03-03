@@ -1,0 +1,65 @@
+### SQL Command: `DROP TABLE`
+
+The `DROP TABLE` command removes an entire table from the database, including its structure, data, indexes, and constraints. It’s a Data Definition Language (DDL) command and is irreversible without backups.
+
+#### Syntax:
+```sql
+DROP TABLE [IF EXISTS] table_name [CASCADE | RESTRICT];
+```
+
+#### Key Points:
+1. **Purpose**: Deletes a table and its contents.
+2. **Destructive**: All data is lost; use with caution.
+3. **Dependencies**: May affect foreign keys or views.
+4. **Support**: Universal in SQL DBMSs.
+
+#### Subtopics (Clauses/Components):
+1. **`DROP TABLE table_name`**: Core deletion command.
+2. **`IF EXISTS`**: Optional error prevention.
+3. **`CASCADE | RESTRICT`**: Optional dependency handling.
+
+#### Detailed Subtopics
+
+##### Subtopic 1: `DROP TABLE table_name`
+- **Purpose**: Specifies the table to delete.
+- **Mandatory**: Yes.
+- **Keywords**:
+  - **`DROP`**: Initiates removal.
+  - **`TABLE`**: Identifies object type.
+- **Example**:
+  ```sql
+  DROP TABLE employees;
+  ```
+  - Deletes `employees` and its data.
+
+##### Subtopic 2: `IF EXISTS`
+- **Purpose**: Avoids error if table doesn't exist.
+- **Mandatory**: No.
+- **Keywords**: `IF`, `EXISTS`.
+- **Example**:
+  ```sql
+  DROP TABLE IF EXISTS employees;
+  ```
+  - Silent if `employees` absent.
+
+##### Subtopic 3: `CASCADE | RESTRICT`
+- **Purpose**: Handles dependencies.
+- **Mandatory**: No (default: `RESTRICT` in some DBMSs).
+- **Keywords**: `CASCADE` (drop dependents), `RESTRICT` (block if dependents).
+- **Example**:
+  ```sql
+  DROP TABLE employees CASCADE;
+  ```
+  - Drops `employees` and referencing foreign keys.
+
+#### Practical Use Case:
+Cleanup table:
+```sql
+DROP TABLE IF EXISTS old_data CASCADE;
+```
+
+#### Notes:
+- vs. `DELETE`: `DELETE` removes rows; `DROP TABLE` removes the table.
+- Variations: PostgreSQL supports `CASCADE`; MySQL defaults to it.
+
+This covers `DROP TABLE`. Say "next" to move to `TRUNCATE TABLE`.
