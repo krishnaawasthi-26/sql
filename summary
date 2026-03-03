@@ -1,0 +1,63 @@
+sql complete notes summary in plain text
+
+this repository explains the working of core sql commands and object management features with practical intent and database specific differences
+
+create database defines a new database and can include owner encoding and template options where supported
+
+drop database removes a database permanently and can use safety options like if exists with restrictions when active connections exist
+
+create schema creates a logical namespace to group tables views functions and other objects and can set authorization
+
+drop schema removes a schema and either restricts removal when objects exist or cascades and removes dependent objects
+
+create table defines table structure with column names data types defaults and constraints such as primary key unique not null check and foreign key
+
+alter table changes table structure after creation including add column drop column rename column rename table change data type add constraint and drop constraint with data impact considerations
+
+drop table deletes table definition and table data with optional cascade behavior for dependent objects
+
+insert into adds new rows either as explicit values or from select and supports default values and inserting into selected columns
+
+select retrieves data and covers projection filtering ordering grouping aggregation joins subqueries limits and aliases and is the main read command for analysis and reporting
+
+update modifies existing rows using set expressions with optional where filtering and can update from joined data in systems that support update with from
+
+delete removes rows based on conditions and without where removes all rows while preserving table structure
+
+merge combines insert update and delete style logic by matching source and target rows and is used for upsert and synchronization workflows
+
+create view stores a query as a virtual table for reuse abstraction and access control and may support updatable behavior under specific rules
+
+drop view removes a saved view definition and can require cascade when other objects depend on it
+
+create index builds a data structure to accelerate lookup sort and join operations and supports unique and composite indexes with tradeoffs in write cost and storage
+
+drop index removes an index and can reduce write overhead but may slow read queries that depended on the index
+
+indexing notes emphasize choosing indexes by workload using selective columns avoiding over indexing and validating gains through execution plans
+
+create sequence creates a numeric generator with options for start increment min max cycle and cache and is useful for surrogate keys
+
+owned by table name column name links a sequence lifecycle to a specific column so dropping the table or column cleans up the sequence automatically in postgresql style systems
+
+drop sequence removes a sequence object and stops future value generation while existing stored values remain unchanged in table rows
+
+create function defines reusable logic that returns scalar values table results or procedural outcomes and includes parameters return type and language specific body
+
+drop function removes a function definition and often requires exact signature when overloaded functions share the same name
+
+create procedure defines callable server side routines mainly for data operations and transaction oriented workflows with input and output parameters depending on platform
+
+drop procedure deletes a stored procedure and any dependent callers may fail until updated
+
+create trigger defines automatic execution before after or instead of data changes and can run per row or per statement depending on engine capabilities
+
+drop trigger removes trigger automation and may alter business rule enforcement or audit behavior
+
+core safety guidance across commands includes using where clauses to avoid accidental mass updates or deletes validating dependencies before drop operations and testing schema changes in controlled environments
+
+cross database differences are important because syntax and feature support vary between postgresql mysql sql server oracle and sqlite especially for alter behavior sequence ownership merge support and trigger semantics
+
+practical workflow in these notes follows design objects then enforce constraints then load data then query and tune then automate with procedures functions and triggers then manage lifecycle with drop and alter operations
+
+expected learning outcome is to understand what each command does when to use it key options likely side effects and common portability concerns between database engines
