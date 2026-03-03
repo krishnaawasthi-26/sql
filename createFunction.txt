@@ -121,7 +121,6 @@ LANGUAGE SQL;
 - **Scope**: Schema-specific (e.g., `hr.add_numbers` if created in `hr`).
 
 ------------------------------------------------------------------------------
-              Let’s continue with the next component of the `CREATE FUNCTION` command! We’ve covered the first "clause" (`CREATE [OR REPLACE] FUNCTION function_name (parameters)`), so now we’ll move to the second component: `RETURNS return_type`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #18 of the 19 remaining.
 
 ---
 
@@ -210,7 +209,6 @@ LANGUAGE SQL;
 - **Requirement**: Must match the function’s logic (e.g., `SELECT a + b` returns an `INT`).
 
 ---------------------------------------------------------------------
-Let’s proceed to the final component of the `CREATE FUNCTION` command! We’ve covered `CREATE [OR REPLACE] FUNCTION function_name (parameters)` and `RETURNS return_type`, so now we’ll tackle the third "clause": `AS $$ function_body $$ LANGUAGE language_name`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #18 of the 19 remaining.
 
 ---
 

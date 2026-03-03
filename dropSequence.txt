@@ -112,7 +112,6 @@ DROP SEQUENCE hr.employee_id_seq;
 - **Default Behavior**: Fails if the sequence doesn’t exist unless `IF EXISTS` is used.
 
 -----------------------------------
-  Let’s continue with the next component of the `DROP SEQUENCE` command! We’ve covered the first "clause" (`DROP SEQUENCE sequence_name [, ...]`), so now we’ll move to the second component: `IF EXISTS`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #25 of the 33 total commands. We have 8 commands left after this.
 
 ---
 

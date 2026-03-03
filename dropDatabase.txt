@@ -117,4 +117,3 @@ DROP DATABASE IF EXISTS old_project_db;
 ---
 
 ### Wrap-Up
-We’ve now covered 13 commands: `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`, `CREATE INDEX`, `DROP INDEX`, `CREATE VIEW`, `DROP VIEW`, `CREATE DATABASE`, and `DROP DATABASE`. This aligns with my earlier estimate (13 total, 0 left after this). If you had a different list in mind or want to explore more (e.g., `GRANT`, `TRUNCATE`), let me know! Otherwise, say "done" or ask a new question!

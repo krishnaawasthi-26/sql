@@ -153,7 +153,6 @@ CREATE TEMPORARY SEQUENCE temp_seq;
   - Type: `BIGINT` (PostgreSQL).
 
 -------------------------------
-Let’s continue with the next component of the `CREATE SEQUENCE` command! We’ve covered the first "clause" (`CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`), so now we’ll move to the second component: `AS data_type`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 
@@ -346,7 +345,6 @@ CREATE SEQUENCE default_seq;
   - Negative values for specific numbering schemes.
 
 -----------------------------------------------
-Let’s continue with the next component of the `CREATE SEQUENCE` command! We’ve covered `CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`, `AS data_type`, and `START WITH start_value`, so now we’ll move to the fourth component: `INCREMENT BY increment_value`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 
@@ -444,7 +442,6 @@ CREATE SEQUENCE default_seq;
   - Negative increments: Countdowns or reverse sequences.
 
 ---------------------------------------------
-  Let’s continue with the next component of the `CREATE SEQUENCE` command! We’ve covered `CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`, `AS data_type`, `START WITH start_value`, and `INCREMENT BY increment_value`, so now we’ll move to the fifth component: `MINVALUE min_value | NO MINVALUE`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 
@@ -550,7 +547,6 @@ CREATE SEQUENCE default_seq
   - `MINVALUE 0`: For countdowns stopping at zero.
 
 -------------------------------------
-Let’s continue with the next component of the `CREATE SEQUENCE` command! We’ve covered `CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`, `AS data_type`, `START WITH start_value`, `INCREMENT BY increment_value`, and `MINVALUE min_value | NO MINVALUE`, so now we’ll move to the sixth component: `MAXVALUE max_value | NO MAXVALUE`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 
@@ -656,7 +652,6 @@ CREATE SEQUENCE large_seq
   - `NO MAXVALUE`: Large-scale applications with no practical limit.
 
 ---------------------------------------
-Let’s continue with the next component of the `CREATE SEQUENCE` command! We’ve covered `CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`, `AS data_type`, `START WITH start_value`, `INCREMENT BY increment_value`, `MINVALUE min_value | NO MINVALUE`, and `MAXVALUE max_value | NO MAXVALUE`, so now we’ll move to the seventh component: `CYCLE | NO CYCLE`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 
@@ -760,7 +755,6 @@ CREATE SEQUENCE countdown_seq
   - `NO CYCLE`: Permanent, unique IDs (e.g., primary keys).
 
 -----------------------------------------------------
-Let’s continue with the next component of the `CREATE SEQUENCE` command! We’ve covered `CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`, `AS data_type`, `START WITH start_value`, `INCREMENT BY increment_value`, `MINVALUE min_value | NO MINVALUE`, `MAXVALUE max_value | NO MAXVALUE`, and `CYCLE | NO CYCLE`, so now we’ll move to the eighth component: `CACHE cache_size | NO CACHE`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 
@@ -868,7 +862,6 @@ CREATE SEQUENCE order_id_seq
   - `NO CACHE`: Low-throughput systems prioritizing continuity.
 
 -------------------------------------------
-Let’s proceed to the final component of the `CREATE SEQUENCE` command! We’ve covered `CREATE [TEMPORARY] SEQUENCE [IF NOT EXISTS] sequence_name`, `AS data_type`, `START WITH start_value`, `INCREMENT BY increment_value`, `MINVALUE min_value | NO MINVALUE`, `MAXVALUE max_value | NO MAXVALUE`, `CYCLE | NO CYCLE`, and `CACHE cache_size | NO CACHE`, so now we’ll tackle the ninth component: `OWNED BY table_name.column_name`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #24 of the 33 total commands. We have 9 commands left after this.
 
 ---
 

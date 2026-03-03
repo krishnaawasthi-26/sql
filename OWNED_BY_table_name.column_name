@@ -89,8 +89,3 @@ CREATE SEQUENCE standalone_seq START WITH 1;
   - No ownership: Shared sequences.
 
 ---
-
-This covers the ninth component (`OWNED BY table_name.column_name`) and its keywords (`OWNED`, `BY`)! We’ve now fully broken down `CREATE SEQUENCE` (command #24). Say "next" to move to command #25 (`DROP SEQUENCE`), or let me know if you want a summary or more on this clause! We’ve got 9 commands left.
-
-
-

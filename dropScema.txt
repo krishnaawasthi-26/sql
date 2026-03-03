@@ -92,7 +92,6 @@ DROP SCHEMA temp;
 
 ---------------------------------------------------------------------
 
-Let’s continue with the next component of the `DROP SCHEMA` command! We’ve covered the first "clause" (`DROP SCHEMA schema_name`), so now we’ll move to the second component: `IF EXISTS`. I’ll treat these as pseudo-clauses for consistency, explaining its purpose, keywords, and providing an example, as we break down `DROP SCHEMA` step-by-step.
 
 ---
 
@@ -167,7 +166,6 @@ DROP SCHEMA temp;
 
 ---
 -----------------------------------------------------------
-  Let’s move to the final component of the `DROP SCHEMA` command! We’ve covered `DROP SCHEMA schema_name` and `IF EXISTS`, so now we’ll tackle the third "clause": the `options` (e.g., `CASCADE`, `RESTRICT`). I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of `DROP SCHEMA` as command #17 of the 19 remaining.
 
 ---
 

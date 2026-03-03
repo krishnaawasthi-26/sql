@@ -1,4 +1,3 @@
-Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 21 so far, up to `DROP PROCEDURE` (command #21), so now we’ll tackle command #22: `CREATE TRIGGER`. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 12 commands left after this.
 
 ---
 
@@ -128,7 +127,6 @@ EXECUTE FUNCTION set_timestamp();
 - **Scope**: Tied to a specific table/view; schema-qualified if needed (e.g., `hr.update_timestamp`).
 
 ----------------------------------------------------
-Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 21 so far, up to `DROP PROCEDURE` (command #21), so now we’ll tackle command #22: `CREATE TRIGGER`. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 12 commands left after this.
 
 ---
 
@@ -258,7 +256,6 @@ EXECUTE FUNCTION set_timestamp();
 - **Scope**: Tied to a specific table/view; schema-qualified if needed (e.g., `hr.update_timestamp`).
 
 --------------------------------------------------
-                    Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered the first "clause" (`CREATE [OR REPLACE] TRIGGER trigger_name`), so now we’ll move to the second component: `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
 
 ---
 
@@ -413,7 +410,6 @@ EXECUTE FUNCTION handle_view_insert();
 - **Scope**: Specific to one table/view.
 
 ------------------------------------
-Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name` and `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, so now we’ll move to the third component: `ON table_name`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
 
 ---
 
@@ -539,7 +535,6 @@ EXECUTE FUNCTION handle_view_insert();
 
 ---
 -----------------------------------------------------------\
-Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name`, `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, and `ON table_name`, so now we’ll move to the fourth component: `FOR EACH ROW | FOR EACH STATEMENT`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
 
 ---
 
@@ -680,7 +675,6 @@ EXECUTE FUNCTION log_update_event();
   - Others may assume `FOR EACH ROW`.
 
 -------------------------------------------------------------
-Let’s continue with the next component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name`, `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, `ON table_name`, and `FOR EACH ROW | FOR EACH STATEMENT`, so now we’ll move to the fifth component: `WHEN (condition)`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
 
 ---
 
@@ -809,7 +803,6 @@ EXECUTE FUNCTION log_salary_increase();
   - Better than body-level conditionals in some cases.
 
 ------------------------------------
-Let’s proceed to the final component of the `CREATE TRIGGER` command! We’ve covered `CREATE [OR REPLACE] TRIGGER trigger_name`, `{BEFORE | AFTER | INSTEAD OF} {INSERT | UPDATE | DELETE | TRUNCATE} [OR ...]`, `ON table_name`, `FOR EACH ROW | FOR EACH STATEMENT`, and `WHEN (condition)`, so now we’ll tackle the sixth component: `EXECUTE {PROCEDURE | FUNCTION} procedure_name(arguments)`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #22 of the 33 total commands. We have 11 commands left after this.
 
 ---
 

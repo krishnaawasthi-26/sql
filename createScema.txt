@@ -115,7 +115,6 @@ CREATE TABLE hr.employees (employee_id INT, name VARCHAR(100));
 
 ---
 
-This is command #16 of the 19 remaining! Say "next" to move to #17 (`DROP SCHEMA`), or let me know if you want more on `CREATE SCHEMA`! We’ve got 18 left after `MERGE`.
 
           -------------------------------------------------------------------
           Your statement—"so schema is like a database inside a database"—is a great way to conceptualize it, and it’s mostly accurate in a practical sense! I’ll clarify what a schema is, confirm how it aligns with your description, and address any nuances, especially since we’re exploring the `CREATE SCHEMA` command. Then I’ll tie it back to the first clause we just covered (`CREATE SCHEMA schema_name`).
@@ -203,7 +202,6 @@ CREATE TABLE sales.orders (order_id INT, amount DECIMAL(10,2));
 - **Yes**: In most systems (e.g., PostgreSQL, SQL Server), a schema is like a "database inside a database" for organization and access control.
 - **Refinement**: It’s not a full database (no separate storage or connection), but a logical grouping within one.
 
-Does this clarify your understanding? Say "next" to move to the second clause of `CREATE SCHEMA` (`AUTHORIZATION owner_name`), or let me know if you want more on schemas!
 ------------------------------------------------------------------
 It seems you want me to break down the `CREATE SCHEMA` command into its clauses "one by one," similar to how I detailed the `MERGE` command earlier. Unlike `MERGE`, which has multiple distinct clauses (`MERGE INTO`, `USING`, `ON`, etc.), `CREATE SCHEMA` is a simpler DDL command with a more compact structure. Its "clauses" aren’t as numerous or complex, but it does have distinct parts that can be considered clauses or components. I’ll identify and explain each part of the `CREATE SCHEMA` syntax individually, treating them as clauses for clarity, and include relevant keywords as I go. After each, you can say "next" to proceed!
 
@@ -293,10 +291,8 @@ SELECT * FROM hr.employees;
 
 ---
 
-This covers the first clause (`CREATE SCHEMA schema_name`) and its keywords (`CREATE`, `SCHEMA`)! Say "next" to move to the second clause (`AUTHORIZATION owner_name`), or let me know if you want more on this one\
                     
 -------------------------------------------------------------------------\
-              Let’s proceed to the next (and final) clause of the `CREATE SCHEMA` command! We’ve covered `CREATE SCHEMA schema_name` and `AUTHORIZATION owner_name`, so now we’ll tackle the third clause: `schema_elements`. I’ll provide a detailed explanation, including relevant keywords within this clause (like `CREATE` for tables or views), its use, and an example, wrapping up our breakdown of `CREATE SCHEMA`.
 
 ---
 
@@ -401,8 +397,5 @@ CREATE TABLE employees (employee_id INT, name VARCHAR(100));
 
 ---
 
-This covers the third clause (`schema_elements`) and its common keywords (`CREATE`, `TABLE`, `VIEW`, `AS`)! This completes the `CREATE SCHEMA` command’s clauses. Say "next" to move to the next command (`DROP SCHEMA`) in our list of 19, or let me know if you want a summary of `CREATE SCHEMA` or more on this clause!
-
 
                                   --------------------------------------
-                        
