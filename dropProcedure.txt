@@ -107,7 +107,6 @@ DROP PROCEDURE update_salary(INT, DECIMAL);
 
 ----------------------------------------------
 
-  Let’s continue with the next component of the `DROP PROCEDURE` command! We’ve covered the first "clause" (`DROP PROCEDURE procedure_name [(parameter_types)]`), so now we’ll move to the second component: `IF EXISTS`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #21 of the 33 total commands. We have 12 commands left after this.
 
 ---
 
@@ -187,7 +186,6 @@ DROP PROCEDURE IF EXISTS update_salary(INT, DECIMAL);
 - **Scope**: Only checks existence, not usage or dependencies.
 
 ------------------------------------------------------------
-  Let’s proceed to the final component of the `DROP PROCEDURE` command! We’ve covered `DROP PROCEDURE procedure_name [(parameter_types)]` and `IF EXISTS`, so now we’ll tackle the third "clause": `options` (e.g., `CASCADE`, `RESTRICT`). I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #21 of the 33 total commands. We have 12 commands left after this.
 
 ---
 

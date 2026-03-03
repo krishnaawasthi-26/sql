@@ -1,4 +1,3 @@
-Let’s move to the next SQL command in our list of 33 total commands! We’ve covered 18 so far, up to `CREATE FUNCTION` (command #18), so now we’ll tackle command #19: `DROP FUNCTION`. I’ll provide a detailed explanation with examples, breaking it into logical components (pseudo-clauses) where applicable, consistent with our one-by-one approach. We have 15 commands left after this.
 
 ---
 
@@ -109,7 +108,6 @@ DROP FUNCTION add_numbers(INT, INT);
 - **Default Behavior**: Fails if the function doesn’t exist unless `IF EXISTS` is used.
 
 -----------------------------------------------------------------
-  Let’s continue with the next component of the `DROP FUNCTION` command! We’ve covered the first "clause" (`DROP FUNCTION function_name [(parameter_types)]`), so now we’ll move to the second component: `IF EXISTS`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #19 of the 33 total commands. We have 14 commands left after this.
 
 ---
 
@@ -191,7 +189,6 @@ DROP FUNCTION IF EXISTS add_numbers(INT, INT);
 
 -------------------------------------------------------------
 
-  Let’s proceed to the final component of the `DROP FUNCTION` command! We’ve covered `DROP FUNCTION function_name [(parameter_types)]` and `IF EXISTS`, so now we’ll tackle the third "clause": `options` (e.g., `CASCADE`, `RESTRICT`). I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #19 of the 33 total commands. We have 14 commands left after this.
 
 ---
 
@@ -288,4 +285,3 @@ DROP FUNCTION no_deps RESTRICT;
   - `RESTRICT`: Safety check before deletion.
 
 ------------------------------------------------------------------
-    

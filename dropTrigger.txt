@@ -126,7 +126,6 @@ DROP TRIGGER update_timestamp ON hr.employees;
 - **Default Behavior**: Fails if the trigger doesn’t exist unless `IF EXISTS` is used.
 
 -----------------------------------------------------------------------
-  Let’s continue with the next component of the `DROP TRIGGER` command! We’ve covered the first "clause" (`DROP TRIGGER trigger_name ON table_name`), so now we’ll move to the second component: `IF EXISTS`. I’ll explain its purpose, keywords, and provide an example, treating it as a pseudo-clause in our breakdown of command #23 of the 33 total commands. We have 10 commands left after this.
 
 ---
 
@@ -222,7 +221,6 @@ DROP TRIGGER IF EXISTS update_timestamp ON hr.employees;
 - **Scope**: Checks existence of the trigger on the specified table/view.
 
 ---------------------------------------
-  Let’s proceed to the final component of the `DROP TRIGGER` command! We’ve covered `DROP TRIGGER trigger_name ON table_name` and `IF EXISTS`, so now we’ll tackle the third "clause": `options` (e.g., `CASCADE`, `RESTRICT`). I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #23 of the 33 total commands. We have 10 commands left after this.
 
 ---
 

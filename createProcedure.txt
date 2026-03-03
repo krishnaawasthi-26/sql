@@ -247,7 +247,6 @@ $$;
 
 ------------------------------------------------------------------------------
 
-Let’s proceed to the final component of the `CREATE PROCEDURE` command! We’ve covered `CREATE [OR REPLACE] PROCEDURE procedure_name (parameters)` and `LANGUAGE language_name`, so now we’ll tackle the third "clause": `AS $$ procedure_body $$`. I’ll explain its purpose, keywords, and provide examples, wrapping up our breakdown of command #20 of the 33 total commands. We have 13 commands left after this.
 
 ---
 
@@ -377,4 +376,3 @@ $$;
 - **Execution**: No direct return value; use `OUT` parameters for results.
 
 -----------------------------------------
-

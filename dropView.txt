@@ -1,4 +1,3 @@
-Let’s proceed with the next SQL command in our exploration! We’ve covered `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`, `CREATE INDEX`, `DROP INDEX`, and `CREATE VIEW`. Now, we’ll tackle the `DROP VIEW` command, a Data Definition Language (DDL) command used to remove a view from the database.
 
 ---
 
@@ -120,5 +119,3 @@ DROP VIEW IF EXISTS old_report CASCADE;
 - **`DROP VIEW`**: Removes a view from the database.
 - **Options**: `IF EXISTS` (error prevention), `CASCADE` (drop dependencies), `RESTRICT` (block if dependencies).
 - **Simple**: No complex clauses; just the view name and modifiers.
-
-I’ve covered `DROP VIEW` in one turn with examples. Let me know if you have doubts, or say "next" to move on (e.g., `CREATE DATABASE`)! Based on my previous estimate (13 total commands), we have 2 left after this if we’re targeting common SQL commands!

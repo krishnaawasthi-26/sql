@@ -1,4 +1,3 @@
-Alright, let’s move on to the next SQL command in our in-depth exploration! We’ve covered `SELECT` (with its five main clauses) and `INSERT`. Now, we’ll dive into the `UPDATE` command.
 
 ### SQL Command: `UPDATE`
 
@@ -149,12 +148,9 @@ WHERE last_order_date > '2025-01-01';
 ```
 - Marks customers with orders since January 1, 2025, as 'Active'.
 
-Since `UPDATE` has a simpler structure than `SELECT`, I’ve covered its main components (`SET` and `WHERE`) and some database-specific extensions in one turn. Let me know if you have doubts about `UPDATE`, or say "next" to move on to the `DELETE` command!
-
 
 ---------------------------------------
 
-I assume you’re asking about all the clauses that can be used with the `UPDATE` command in SQL. Since `UPDATE` has a simpler structure compared to `SELECT`, it doesn’t have as many clauses, but it does include a few key components and some database-specific extensions. Let’s go through them systematically to cover all possible clauses or clause-like elements you can use with `UPDATE`.
 
 ### Standard Clauses in `UPDATE` (ANSI SQL)
 In standard SQL, the `UPDATE` command has two primary parts that are often referred to as "clauses":
@@ -326,6 +322,5 @@ WHERE d.department_name = 'Marketing' OR d.department_name IS NULL;
 ```
 - Updates salaries for Marketing employees or those with no department.
 
-Does this cover what you were looking for regarding `UPDATE` clauses? Let me know if you have more questions, or say "next" to move on to the `DELETE` command!
 
 -------------------------------------------------------------

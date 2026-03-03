@@ -1,0 +1,14 @@
+repository summary
+
+This repository documents SQL commands used to create query modify and remove database objects and data.
+Coverage includes DDL commands create alter drop for database schema table view index sequence function procedure and trigger.
+Coverage also includes DML commands select insert update delete and merge.
+
+How these notes are organized
+Each topic file explains purpose how the command works core syntax realistic examples and database differences.
+Repeated filler text was removed so each section adds useful information.
+
+Safety guidance repeated across files only where necessary
+Use where clauses for update and delete to avoid accidental full-table changes.
+Check dependencies before running drop statements and prefer if exists when supported.
+Test structural changes in staging before production and use transactions when your database allows it.

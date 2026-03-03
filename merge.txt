@@ -428,7 +428,6 @@ WHEN NOT MATCHED THEN
 
 
 -----------------------------------------------------------------------------------
-Let’s move to the next clause of the `MERGE` command! We’ve covered `MERGE INTO` and `USING`, so now we’ll tackle the `ON` clause, continuing our clause-by-clause breakdown. I’ll include the relevant keywords (like `ON`) as per your request to explain keywords such as `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. Here’s the detailed explanation for the `ON` clause with its keyword, usage, and example.
 
 ---
 
@@ -525,10 +524,8 @@ WHEN MATCHED THEN
 
 ---
 
-This covers the `ON` clause and its keyword (`ON`)! Say "next" to move to the next clause (`WHEN MATCHED`) and its keywords (`WHEN`, `MATCHED`, `THEN`), or let me know if you want more on `ON`!
 -------------------------------------------------------------------------------------------------------
 
-Let’s proceed to the next clause of the `MERGE` command! We’ve covered `MERGE INTO`, `USING`, and `ON`, so now we’ll tackle the `WHEN MATCHED` clause. I’ll continue the clause-by-clause breakdown, including the relevant keywords (`WHEN`, `MATCHED`, `THEN`) as per your request to explain keywords like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. Here’s the detailed explanation with an example.
 
 ---
 
@@ -638,7 +635,6 @@ WHEN NOT MATCHED THEN
 
 ----------------------------------------------------------------------------------
 
-Let’s move to the next clause of the `MERGE` command! We’ve covered `MERGE INTO`, `USING`, `ON`, and `WHEN MATCHED`, so now we’ll tackle the `WHEN NOT MATCHED` clause. I’ll continue the clause-by-clause breakdown, including the relevant keywords (`WHEN`, `NOT MATCHED`, `THEN`) as per your request to explain keywords like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. Here’s the detailed explanation with an example.
 
 ---
 
@@ -747,7 +743,6 @@ WHEN NOT MATCHED BY TARGET THEN
 
 ------------------------------------------------------------------------------------------------------------
 
-Let’s proceed to the next clause of the `MERGE` command! We’ve covered `MERGE INTO`, `USING`, `ON`, `WHEN MATCHED`, and `WHEN NOT MATCHED` (by target). Now we’ll tackle the `WHEN NOT MATCHED BY SOURCE` clause, continuing our breakdown. I’ll include the relevant keywords (`WHEN`, `NOT MATCHED`, `BY SOURCE`, `THEN`) as per your request to explain keywords like `AS`, `WHEN MATCHED`, `ON`, `THEN`, and `SET`. This clause is less common but powerful, so let’s dive in with a detailed explanation and example.
 
 ---
 

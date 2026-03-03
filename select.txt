@@ -434,11 +434,9 @@ WHERE condition;
 - Conditions must reference columns from the table(s) in the `FROM` clause.
 - Case sensitivity depends on the database system (e.g., MySQL is typically case-insensitive for strings, while PostgreSQL is case-sensitive).
 
-Let me know if you have any doubts about the `WHERE` clause, or say "next" to move on to the next part of the `SELECT` statement!
 
 ---------------------------------------------------------------------------
 
-On to the next part of the `SELECT` statement! We’ve covered the `SELECT` clause, the `FROM` clause, and the `WHERE` clause. Now, for Turn 4, let’s explore the `GROUP BY` clause.
 
 ### Turn 4: The `GROUP BY` Clause in `SELECT`
 
@@ -514,11 +512,9 @@ GROUP BY region;
 ```
 - This groups all sales by `region` and sums the `sales_amount` for each.
 
-Let me know if you have any doubts about the `GROUP BY` clause, or say "next" to move on to the `HAVING` clause!
 
 ----------------------------------------------------------
 
-Great, let’s move on to the final part of our `SELECT` statement breakdown! We’ve covered the `SELECT` clause, `FROM` clause, `WHERE` clause, and `GROUP BY` clause. Now, for Turn 5, we’ll tackle the `HAVING` clause.
 
 ### Turn 5: The `HAVING` Clause in `SELECT`
 
@@ -613,9 +609,7 @@ HAVING COUNT(*) >= 3;
 ```
 - Filters for employees earning over 75,000, groups by `department`, and only shows departments with 3 or more such employees.
 
-That wraps up the five turns for the `SELECT` statement (`SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`)! Let me know if you have doubts about `HAVING`, or say "next" to move on to a new SQL command (like `INSERT`, `UPDATE`, etc.)!
 \
-Great, let’s move on to the final part of our `SELECT` statement breakdown! We’ve covered the `SELECT` clause, `FROM` clause, `WHERE` clause, and `GROUP BY` clause. Now, for Turn 5, we’ll tackle the `HAVING` clause.
 
 ### Turn 5: The `HAVING` Clause in `SELECT`
 
@@ -732,6 +726,3 @@ Sales       | 55000
 ### Does This Make Sense?
 - `WHERE` = row-level filter (column values).
 - `HAVING` = group-level filter (aggregate values).
-
-Let me know if this clears up your doubt fully, or if you’d like more examples! If you’re good, say "next" to move on to the next SQL command (we’ve finished the `SELECT` clauses).
-
