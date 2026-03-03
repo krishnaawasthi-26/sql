@@ -138,7 +138,6 @@ ON orders (customer_id);
 - **Simple**: No complex clauses like `SELECT`; just the index definition.
 
 
-=======================================================================
 It seems like you’re asking for a clearer understanding of what an index really is in SQL, based on your statement: "it is a special name for every entry which make data retrieval easy." Your description is partially correct but misses some key details about how an index works. Let me explain it thoroughly in a simple way, refining your idea and providing a precise picture of what an index is and how it aids data retrieval.
 
 ---
