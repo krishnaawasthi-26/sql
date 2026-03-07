@@ -1,0 +1,71 @@
+### SQL Command: `CREATE USER`
+
+The `CREATE USER` command creates a new user account in the database, allowing authentication and access control. It’s a Data Control Language (DCL) command used for user management and security.
+
+#### Syntax:
+```sql
+CREATE USER user_name [WITH PASSWORD 'password'] [options];
+```
+
+- **`user_name`**: The username for the new user.
+- **`WITH PASSWORD 'password'`**: Optional; sets the password (encrypted in most DBMSs).
+- **`options`**: Additional settings like `SUPERUSER`, `CREATEDB`, `LOGIN`.
+
+#### Key Points:
+1. **Purpose**: Adds a user for authentication and privileges.
+2. **Security**: Passwords are hashed; options control capabilities.
+3. **Roles**: Users can inherit from roles.
+4. **Support**: Universal, with variations (e.g., PostgreSQL uses `USER` synonymously with `ROLE`).
+
+#### Subtopics (Clauses/Components):
+1. **`CREATE USER user_name`**: Core creation.
+2. **`WITH PASSWORD 'password'`**: Authentication setup.
+3. **`options`**: Additional properties.
+
+##### Subtopic 1: `CREATE USER user_name`
+- **Purpose**: Defines the new user by name.
+- **Mandatory**: Yes.
+- **Keywords**: `CREATE` (create object), `USER` (user account).
+- **Example**:
+  ```sql
+  CREATE USER hr_user;
+  ```
+  - Creates `hr_user` without password (may require login setup).
+
+##### Subtopic 2: `WITH PASSWORD 'password'`
+- **Purpose**: Sets the authentication credential.
+- **Mandatory**: No (depends on DBMS; often required for login).
+- **Keywords**: `WITH` (options), `PASSWORD` (credential).
+- **Example**:
+  ```sql
+  CREATE USER hr_user WITH PASSWORD 'secure123';
+  ```
+  - Creates `hr_user` with password 'secure123' (hashed).
+
+##### Subtopic 3: `options`
+- **Purpose**: Configures user capabilities.
+- **Mandatory**: No.
+- **Keywords**: `SUPERUSER` (admin), `CREATEDB` (create databases), `LOGIN` (allow login), `NO LOGIN` (role only).
+- **Example**:
+  ```sql
+  CREATE USER hr_user WITH PASSWORD 'pass' CREATEDB LOGIN;
+  ```
+  - Allows `hr_user` to create databases and login.
+
+#### Practical Use Case:
+Add an app user:
+```sql
+CREATE USER app_user WITH PASSWORD 'apppass' LOGIN;
+GRANT CONNECT ON DATABASE company_db TO app_user;
+```
+
+#### Notes:
+- **vs. `CREATE ROLE`**: In PostgreSQL, `USER` = `ROLE` with `LOGIN` by default.
+- **Database Variations**:
+  - **PostgreSQL**: `CREATE USER hr_user WITH PASSWORD 'pass' SUPERUSER;`.
+  - **MySQL**: `CREATE USER 'hr_user'@'localhost' IDENTIFIED BY 'pass';`.
+  - **SQL Server**: `CREATE LOGIN hr_user WITH PASSWORD = 'pass'; CREATE USER hr_user FOR LOGIN hr_user;`.
+  - **Oracle**: `CREATE USER hr_user IDENTIFIED BY pass;`.
+- **Security**: Use strong passwords; grant minimal privileges.
+
+This covers `CREATE USER`. Say "next" for `DROP USER`.
