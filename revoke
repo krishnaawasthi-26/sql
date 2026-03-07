@@ -1,0 +1,63 @@
+### SQL Command: `REVOKE`
+
+The `REVOKE` command removes (revokes) permissions (privileges) previously granted to users or roles on database objects. It’s a Data Control Language (DCL) command used for revoking access to maintain security.
+
+#### Syntax:
+```sql
+REVOKE {privilege [, ...] | ALL PRIVILEGES}
+ON {object_type object_name}
+FROM {user_name | role_name | PUBLIC} [CASCADE | RESTRICT] [GRANT OPTION FOR {user_name | role_name | PUBLIC}];
+```
+
+- **`privilege`**: Permissions like `SELECT`, `INSERT`, `UPDATE`, `DELETE`.
+- **`ON object`**: The target (table, schema, etc.).
+- **`FROM user_name`**: The recipient to revoke from.
+- **`CASCADE | RESTRICT`**: Optional; how to handle dependent grants.
+- **`GRANT OPTION FOR`**: Optional; revokes only the grant option.
+
+#### Key Points:
+1. **Purpose**: Revokes access to prevent unauthorized actions.
+2. **Granularity**: Per-object or global (e.g., schema).
+3. **Cascade**: Propagates revocation to grantees.
+4. **Support**: Universal, with variations.
+
+#### Subtopics (Clauses/Components):
+1. **`REVOKE privilege ON object`**: Core revocation.
+2. **`FROM user_name [CASCADE | RESTRICT]`**: Recipient and propagation.
+
+##### Subtopic 1: `REVOKE privilege ON object`
+- **Purpose**: Defines the permissions and target to revoke.
+- **Mandatory**: Yes.
+- **Keywords**: `REVOKE` (remove), `ON` (target), `ALL PRIVILEGES` (all permissions).
+- **Example**:
+  ```sql
+  REVOKE SELECT, INSERT ON employees FROM hr_user;
+  ```
+  - Revokes read/write on `employees` from `hr_user`.
+
+##### Subtopic 2: `FROM user_name [CASCADE | RESTRICT]`
+- **Purpose**: Specifies the recipient and how to handle grantees.
+- **Mandatory**: Yes (the `FROM` part); `CASCADE | RESTRICT` optional.
+- **Keywords**: `FROM` (recipient), `CASCADE` (propagate revocation), `RESTRICT` (block if dependents).
+- **Example**:
+  ```sql
+  REVOKE UPDATE ON employees FROM hr_user CASCADE;
+  ```
+  - Revokes `UPDATE` from `hr_user` and propagates to anyone they granted it to.
+
+#### Practical Use Case:
+Revoke schema access:
+```sql
+REVOKE CREATE ON SCHEMA hr FROM app_user CASCADE;
+```
+
+#### Notes:
+- **vs. `GRANT`**: `GRANT` adds; `REVOKE` removes.
+- **Database Variations**:
+  - **PostgreSQL**: Supports `CASCADE`/`RESTRICT`.
+  - **MySQL**: `REVOKE SELECT ON employees.* FROM 'user'@'host';`.
+  - **SQL Server**: `REVOKE SELECT ON employees TO user;`.
+  - **Oracle**: `REVOKE SELECT ON employees FROM user;`.
+- **Safety**: Revocation doesn't affect existing data; audit with `SELECT * FROM information_schema.table_privileges;`.
+
+This covers `REVOKE`. Say "next" for `CREATE USER`.
