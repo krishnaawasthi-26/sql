@@ -1,0 +1,299 @@
+Perfect — we’ll do this in your **nexty way**: **one topic/subtopic at a time**.
+
+## Topic 1: **TCL (Transaction Control Language)**
+
+This group controls **transactions** in a database.
+
+A **transaction** = a set of SQL operations treated like **one unit of work**.
+
+Example:
+
+* deduct money from A
+* add money to B
+
+Both should happen together.
+If one fails, database should not stay half-updated.
+
+That is why TCL exists.
+
+---
+
+## Why TCL is needed
+
+Suppose you run:
+
+```sql
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+```
+
+If the first runs and the second fails, data becomes wrong.
+
+So database uses transaction control to make sure work is:
+
+* fully saved
+* or fully undone
+
+---
+
+# Subtopics inside TCL
+
+These are the main commands:
+
+1. `BEGIN` / `START TRANSACTION`
+2. `COMMIT`
+3. `ROLLBACK`
+4. `SAVEPOINT`
+5. `SET TRANSACTION`
+
+Today let’s do them one by one.
+
+---
+
+## 1) `BEGIN` / `START TRANSACTION`
+
+This starts a new transaction.
+
+It tells the database:
+
+> “From here, treat the next statements as one logical block.”
+
+### Syntax
+
+```sql
+BEGIN;
+```
+
+or in many DBs:
+
+```sql
+START TRANSACTION;
+```
+
+### Example
+
+```sql
+BEGIN;
+
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+```
+
+At this point, changes are **not permanent yet**.
+
+They are waiting for either:
+
+* `COMMIT` → save permanently
+* `ROLLBACK` → undo
+
+### Easy idea
+
+`BEGIN` = “start recording changes”
+
+---
+
+## 2) `COMMIT`
+
+This permanently saves all changes made in the current transaction.
+
+### Syntax
+
+```sql
+COMMIT;
+```
+
+### Example
+
+```sql
+BEGIN;
+
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+
+COMMIT;
+```
+
+Now both updates are permanently stored.
+
+### Easy idea
+
+`COMMIT` = “yes, final save”
+
+---
+
+## 3) `ROLLBACK`
+
+This undoes changes made in the current transaction, but only those that were **not committed yet**.
+
+### Syntax
+
+```sql
+ROLLBACK;
+```
+
+### Example
+
+```sql
+BEGIN;
+
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+UPDATE accounts SET balance = balance + 1000 WHERE id = 2;
+
+ROLLBACK;
+```
+
+Now database goes back to the previous state.
+
+### Easy idea
+
+`ROLLBACK` = “cancel everything since BEGIN”
+
+---
+
+## 4) `SAVEPOINT`
+
+A savepoint creates a **checkpoint inside a transaction**.
+
+Instead of undoing everything, you can roll back only up to a certain point.
+
+### Syntax
+
+```sql
+SAVEPOINT sp1;
+```
+
+### Example
+
+```sql
+BEGIN;
+
+UPDATE students SET marks = marks + 5 WHERE id = 1;
+SAVEPOINT s1;
+
+UPDATE students SET marks = marks + 5 WHERE id = 2;
+SAVEPOINT s2;
+
+UPDATE students SET marks = marks + 5 WHERE id = 3;
+```
+
+Now if something goes wrong after `s2`, you can do:
+
+```sql
+ROLLBACK TO s2;
+```
+
+Then only changes after `s2` are undone.
+
+### Easy idea
+
+`SAVEPOINT` = “temporary checkpoint”
+
+---
+
+## 5) `SET TRANSACTION`
+
+This sets properties of the transaction.
+
+Most commonly it controls things like:
+
+* read only / read write
+* isolation behavior
+
+### Example
+
+```sql
+SET TRANSACTION READ ONLY;
+```
+
+This means transaction can only read data, not modify it.
+
+Another example:
+
+```sql
+SET TRANSACTION READ WRITE;
+```
+
+This allows insert/update/delete.
+
+### Easy idea
+
+`SET TRANSACTION` = “set rules for this transaction”
+
+---
+
+# Full flow example
+
+```sql
+BEGIN;
+
+UPDATE products SET stock = stock - 1 WHERE id = 10;
+SAVEPOINT after_stock;
+
+UPDATE orders SET status = 'confirmed' WHERE id = 5;
+
+COMMIT;
+```
+
+If second query fails, you may do:
+
+```sql
+ROLLBACK TO after_stock;
+```
+
+Or if whole transaction should be cancelled:
+
+```sql
+ROLLBACK;
+```
+
+---
+
+# Important point
+
+After `COMMIT`:
+
+* changes are permanent
+* you cannot rollback them normally
+
+After `ROLLBACK`:
+
+* uncommitted changes are undone
+
+---
+
+# Very short memory trick
+
+* `BEGIN` → start
+* `COMMIT` → save
+* `ROLLBACK` → undo
+* `SAVEPOINT` → checkpoint
+* `SET TRANSACTION` → rules
+
+---
+
+# Small interview-style difference
+
+## `ROLLBACK` vs `ROLLBACK TO SAVEPOINT`
+
+* `ROLLBACK` → undo whole transaction
+* `ROLLBACK TO savepoint_name` → undo only up to that savepoint
+
+## `COMMIT` vs `SAVEPOINT`
+
+* `COMMIT` makes changes permanent
+* `SAVEPOINT` only marks an internal point, not permanent save
+
+---
+
+## One important correction
+
+You wrote:
+
+> `COMMIT / ROLLBACK / SAVEPOINT / SET TRANSACTION / BEGIN (TCL group)`
+
+Yes, this is correct as a learning grouping.
+But in exams/interviews, sometimes only `COMMIT`, `ROLLBACK`, and `SAVEPOINT` are emphasized as the classic TCL commands, while `BEGIN` and `SET TRANSACTION` are also included depending on DBMS and course style.
+
+---
+
+Next topic should be **`ALTER USER`**.
