@@ -1,0 +1,106 @@
+### SQL Command: `GRANT`
+
+The `GRANT` command assigns permissions (privileges) to users or roles on database objects (e.g., tables, schemas). It’s a Data Control Language (DCL) command used for security and access control.
+
+#### Syntax:
+```sql
+GRANT {privilege [, ...] | ALL PRIVILEGES}
+ON {table_name | SCHEMA schema_name | DATABASE db_name | FUNCTION func_name | ...}
+TO {user_name | role_name | PUBLIC} [WITH GRANT OPTION] [CASCADE];
+```
+
+- **`privilege`**: Permissions like `SELECT`, `INSERT`, `UPDATE`, `DELETE`.
+- **`ON object`**: The target (table, schema, etc.).
+- **`TO user_name`**: Recipient (user, role, or `PUBLIC` for all).
+- **`WITH GRANT OPTION`**: Allows the recipient to grant to others.
+- **`CASCADE`**: Propagates to grantees (database-specific).
+
+#### Key Points:
+1. **Purpose**: Controls who can access/modify objects.
+2. **Granularity**: Per-object or global (e.g., schema).
+3. **Inheritance**: Roles can inherit from other roles.
+4. **Support**: Universal, with variations (e.g., PostgreSQL supports `PUBLIC`).
+
+#### Subtopics (Clauses/Components):
+1. **`GRANT privilege ON object`**: Core privilege assignment.
+2. **`TO user_name [WITH GRANT OPTION]`**: Recipient and delegation.
+
+##### Subtopic 1: `GRANT privilege ON object`
+- **Purpose**: Defines permissions and target.
+- **Mandatory**: Yes.
+- **Keywords**: `GRANT` (assign), `ON` (target object), `ALL PRIVILEGES` (all permissions).
+- **Example**:
+  ```sql
+  GRANT SELECT, INSERT ON employees TO hr_user;
+  ```
+  - Grants read/write to `hr_user` on `employees`.
+
+##### Subtopic 2: `TO user_name [WITH GRANT OPTION]`
+- **Purpose**: Specifies recipient and delegation rights.
+- **Mandatory**: Yes.
+- **Keywords**: `TO` (recipient), `WITH GRANT OPTION` (delegate), `PUBLIC` (all users).
+- **Example**:
+  ```sql
+  GRANT UPDATE ON employees TO hr_user WITH GRANT OPTION;
+  ```
+  - `hr_user` can update and grant to others.
+
+#### Practical Use Case:
+Grant schema access:
+```sql
+GRANT USAGE, CREATE ON SCHEMA hr TO app_user;
+```
+
+#### Notes:
+- **Revocation**: Use `REVOKE` to undo.
+- **Database Variations**:
+  - **PostgreSQL**: Full support for `PUBLIC`.
+  - **MySQL**: `GRANT SELECT ON employees.* TO 'user'@'host';`.
+  - **SQL Server**: `GRANT SELECT ON employees TO user;`.
+  - **Oracle**: `GRANT SELECT ON employees TO user;`.
+- **Safety**: Start with least privilege; audit with `SELECT * FROM information_schema.table_privileges;`.
+
+### SQL Command: `GRANT`
+
+The `GRANT` command assigns permissions (privileges) to users or roles on database objects. It’s a Data Control Language (DCL) command for access control.
+
+#### Syntax Overview:
+```sql
+GRANT {privilege [, ...] | ALL PRIVILEGES}
+ON {object_type object_name}
+TO {user_name | role_name | PUBLIC} [WITH GRANT OPTION];
+```
+
+#### Key Points:
+1. **Purpose**: Controls who can read, write, or manage objects.
+2. **Granularity**: Per-object (table, schema) or global.
+3. **Support**: Universal.
+
+#### Subtopics (Clauses/Components):
+1. **`GRANT privilege ON object`**: Core privilege assignment.
+2. **`TO user_name [WITH GRANT OPTION]`**: Recipient and delegation.
+
+##### Subtopic 1: `GRANT privilege ON object`
+- **Purpose**: Defines the permissions and target object.
+- **Mandatory**: Yes.
+- **Keywords**: `GRANT` (assign), `ON` (target), `ALL PRIVILEGES` (all permissions).
+- **Example**:
+  ```sql
+  GRANT SELECT, INSERT ON employees TO hr_user;
+  ```
+  - Grants read/write on `employees` to `hr_user`.
+
+
+##### Subtopic 2: `TO user_name [WITH GRANT OPTION]`
+- **Purpose**: Identifies the recipient of the privileges and optionally allows them to grant those privileges to others (delegation).
+- **Mandatory**: Yes (the `TO` part); `WITH GRANT OPTION` is optional.
+- **Keywords**: `TO` (specifies recipient), `WITH GRANT OPTION` (delegation rights), `PUBLIC` (all users).
+- **Example**:
+  ```sql
+  GRANT SELECT ON employees TO hr_user WITH GRANT OPTION;
+  ```
+  - `TO hr_user`: Grants to `hr_user`.
+  - `WITH GRANT OPTION`: `hr_user` can grant `SELECT` to others.
+  - Alternative: `GRANT SELECT ON employees TO PUBLIC;` (grants to all users).
+
+Say "next" for the next command (`REVOKE`).
