@@ -1,0 +1,288 @@
+## Topic 2: `ALTER USER`
+
+`ALTER USER` is used to **change an existing database user account**.
+
+You use it when you want to modify things like:
+
+* password
+* account lock/unlock
+* authentication method
+* quota/profile in some DBMSs
+* default roles or privileges settings in some systems
+
+So simple meaning:
+
+> `CREATE USER` makes a new user
+> `ALTER USER` changes an old user
+
+---
+
+# Why do we need `ALTER USER`?
+
+Suppose a user already exists:
+
+* their password expired
+* account got locked
+* you want to force password change
+* you want to switch authentication plugin
+* you want to change resource limits
+
+Then you do not create them again.
+You just **alter** that user.
+
+---
+
+# Basic syntax
+
+Different DBMSs have slightly different syntax, but general idea is:
+
+```sql
+ALTER USER username IDENTIFIED BY new_password;
+```
+
+This means:
+
+* find existing user
+* update its login details
+
+---
+
+# Subtopic 1: Change password
+
+This is the most common use.
+
+### Example
+
+```sql
+ALTER USER krishna IDENTIFIED BY 'newpass123';
+```
+
+Meaning:
+
+* user `krishna` already exists
+* now its password becomes `newpass123`
+
+### Easy idea
+
+`ALTER USER` + `IDENTIFIED BY` = reset/change password
+
+---
+
+# Subtopic 2: Lock account
+
+Sometimes admin wants to block login temporarily.
+
+### Example
+
+```sql
+ALTER USER krishna ACCOUNT LOCK;
+```
+
+Meaning:
+
+* user still exists
+* but cannot log in
+
+### Real-life use
+
+* suspicious activity
+* employee left temporarily
+* security issue
+
+---
+
+# Subtopic 3: Unlock account
+
+If account was locked, admin can enable it again.
+
+### Example
+
+```sql
+ALTER USER krishna ACCOUNT UNLOCK;
+```
+
+Meaning:
+
+* user can log in again
+
+---
+
+# Subtopic 4: Password expire
+
+In some DBMSs, you can force user to change password on next login.
+
+### Example
+
+```sql
+ALTER USER krishna PASSWORD EXPIRE;
+```
+
+Meaning:
+
+* current password becomes expired
+* user must set a new one
+
+---
+
+# Subtopic 5: Change authentication method
+
+Some databases allow changing how user is authenticated.
+
+For example in MySQL, a user may authenticate with a specific plugin.
+
+### Example idea
+
+```sql
+ALTER USER 'krishna'@'localhost' IDENTIFIED WITH mysql_native_password BY 'abc123';
+```
+
+Meaning:
+
+* user authentication style changed
+* password also updated
+
+This is DBMS-specific, so syntax changes across Oracle / MySQL / PostgreSQL.
+
+---
+
+# Subtopic 6: Resource/profile changes
+
+In some DBMSs, user settings can also be changed.
+
+Examples:
+
+* password policy
+* profile
+* tablespace
+* quota
+* session limits
+
+This depends heavily on the database system.
+
+---
+
+# Important note: DBMS difference
+
+`ALTER USER` syntax is **not exactly same everywhere**.
+
+### Example:
+
+* **MySQL** uses host with username often:
+
+```sql
+ALTER USER 'krishna'@'localhost' IDENTIFIED BY 'newpass';
+```
+
+* **Oracle** may look like:
+
+```sql
+ALTER USER krishna IDENTIFIED BY newpass;
+```
+
+* **PostgreSQL** often uses:
+
+```sql
+ALTER USER krishna WITH PASSWORD 'newpass';
+```
+
+So concept is same, syntax can vary.
+
+---
+
+# Example flow
+
+```sql
+CREATE USER krishna IDENTIFIED BY 'oldpass';
+ALTER USER krishna IDENTIFIED BY 'newpass';
+```
+
+Meaning:
+
+1. create user
+2. later update password
+
+---
+
+# Difference: `CREATE USER` vs `ALTER USER`
+
+## `CREATE USER`
+
+* makes a brand new user
+
+## `ALTER USER`
+
+* changes already existing user
+
+### Example
+
+```sql
+CREATE USER krishna IDENTIFIED BY 'abc';
+```
+
+If `krishna` already exists, this may fail.
+
+But:
+
+```sql
+ALTER USER krishna IDENTIFIED BY 'xyz';
+```
+
+This updates existing one.
+
+---
+
+# Small interview points
+
+## Can `ALTER USER` create a user?
+
+No.
+It only modifies an existing user.
+
+## Does `ALTER USER` delete a user?
+
+No.
+Deletion is done by `DROP USER`.
+
+## Can normal users use `ALTER USER`?
+
+Usually only:
+
+* admin
+* DBA
+* or the user for their own password in some DBMSs
+
+depending on permissions.
+
+---
+
+# Super short memory trick
+
+* `CREATE USER` → new user
+* `ALTER USER` → modify user
+* `DROP USER` → remove user
+
+---
+
+# Mini examples
+
+### Change password
+
+```sql
+ALTER USER krishna IDENTIFIED BY 'pass456';
+```
+
+### Lock account
+
+```sql
+ALTER USER krishna ACCOUNT LOCK;
+```
+
+### Unlock account
+
+```sql
+ALTER USER krishna ACCOUNT UNLOCK;
+```
+
+---
+
+Next is **`DROP USER`**.
