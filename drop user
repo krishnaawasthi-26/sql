@@ -1,0 +1,276 @@
+## Topic 3: `DROP USER`
+
+`DROP USER` is used to **delete an existing user account from the database**.
+
+Simple meaning:
+
+> `CREATE USER` → make user
+> `ALTER USER` → change user
+> `DROP USER` → remove user
+
+---
+
+# What happens when we use `DROP USER`?
+
+When you run `DROP USER`:
+
+* that user account is removed
+* the user can no longer log in
+* database access of that user is gone
+
+So this is not temporary like `ACCOUNT LOCK`.
+
+It is a **full removal** of the user account.
+
+---
+
+# Basic syntax
+
+```sql
+DROP USER username;
+```
+
+### Example
+
+```sql
+DROP USER krishna;
+```
+
+Meaning:
+
+* user `krishna` is deleted from the database
+
+---
+
+# Subtopic 1: Why do we use `DROP USER`?
+
+We use it when:
+
+* employee left company
+* test user no longer needed
+* wrong user was created
+* security cleanup
+* temporary practice accounts must be removed
+
+---
+
+# Subtopic 2: `DROP USER` vs `ALTER USER ... ACCOUNT LOCK`
+
+This is very important.
+
+## Lock account
+
+```sql
+ALTER USER krishna ACCOUNT LOCK;
+```
+
+* user still exists
+* cannot log in
+* can be unlocked later
+
+## Drop user
+
+```sql
+DROP USER krishna;
+```
+
+* user is removed
+* cannot be unlocked
+* if needed again, must recreate user
+
+### Easy idea
+
+* `LOCK` = pause user
+* `DROP` = delete user
+
+---
+
+# Subtopic 3: What if the user owns objects?
+
+Sometimes a user may own:
+
+* tables
+* views
+* procedures
+* schemas
+* other objects
+
+Then `DROP USER` may fail unless those objects are removed first.
+
+This depends on the DBMS.
+
+### Example idea
+
+If user owns tables, database may say:
+
+* cannot drop user
+* first remove or reassign owned objects
+
+---
+
+# Subtopic 4: `CASCADE` in some DBMSs
+
+Some databases allow:
+
+```sql
+DROP USER krishna CASCADE;
+```
+
+Meaning:
+
+* drop the user
+* also remove objects owned by that user
+
+This is common in Oracle-style syntax.
+
+### Warning
+
+This is dangerous because:
+
+* user deleted
+* owned objects also deleted
+
+So admin should use carefully.
+
+---
+
+# Subtopic 5: MySQL style
+
+In MySQL, user often includes host too:
+
+```sql
+DROP USER 'krishna'@'localhost';
+```
+
+Because MySQL identifies user by:
+
+* username
+* host
+
+So `'krishna'@'localhost'` and `'krishna'@'%'` may be treated differently.
+
+---
+
+# Subtopic 6: PostgreSQL note
+
+In PostgreSQL, users/roles are closely related.
+
+You often use:
+
+```sql
+DROP USER krishna;
+```
+
+or sometimes `DROP ROLE`.
+
+But if the user owns objects, you may need to:
+
+* reassign ownership
+* drop owned objects first
+
+---
+
+# Example flow
+
+```sql
+CREATE USER krishna IDENTIFIED BY 'abc123';
+ALTER USER krishna IDENTIFIED BY 'newpass';
+DROP USER krishna;
+```
+
+Meaning:
+
+1. create user
+2. modify user
+3. delete user
+
+---
+
+# Important interview differences
+
+## `DROP USER` vs `DELETE`
+
+* `DROP USER` removes a database account
+* `DELETE` removes rows from a table
+
+These are totally different.
+
+---
+
+## `DROP USER` vs `TRUNCATE`
+
+* `DROP USER` deletes user account
+* `TRUNCATE` removes all rows from a table
+
+Again, unrelated things.
+
+---
+
+## `DROP USER` vs `ACCOUNT LOCK`
+
+* `DROP USER` = permanent removal
+* `ACCOUNT LOCK` = temporary disable
+
+---
+
+# Small real-life example
+
+Suppose company created a temporary user:
+
+```sql
+CREATE USER intern1 IDENTIFIED BY 'pass123';
+```
+
+After internship ends:
+
+```sql
+DROP USER intern1;
+```
+
+Now that account is gone completely.
+
+---
+
+# Super short memory trick
+
+* `CREATE USER` → add user
+* `ALTER USER` → modify user
+* `DROP USER` → remove user
+
+---
+
+# One caution
+
+Only admin / DBA or users with enough privilege can usually run `DROP USER`, because deleting users is a sensitive action.
+
+---
+
+# Mini examples
+
+### Normal
+
+```sql
+DROP USER krishna;
+```
+
+### Oracle-style with owned objects
+
+```sql
+DROP USER krishna CASCADE;
+```
+
+### MySQL-style
+
+```sql
+DROP USER 'krishna'@'localhost';
+```
+
+---
+
+Next topic would normally be **revision of all three together**:
+
+* `ALTER USER`
+* `DROP USER`
+* `TCL group`
+
+Say **next** and I’ll do the combined revision in the same nexty style.
