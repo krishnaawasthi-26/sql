@@ -1,0 +1,72 @@
+### SQL Command: `TRUNCATE TABLE`
+
+The `TRUNCATE TABLE` command removes all rows from a table (or multiple tables) while preserving the table's structure, indexes, and constraints. It’s a Data Definition Language (DDL) command that’s faster than `DELETE` because it doesn’t log individual row deletions, but it’s "all or nothing" (no `WHERE` clause).
+
+#### Syntax:
+```sql
+TRUNCATE TABLE table_name1 [, table_name2, ...] [CASCADE | RESTART IDENTITY | CONTINUE IDENTITY];
+```
+
+- **`table_name`**: The table(s) to empty.
+- **`CASCADE`**: Optional; truncates dependent tables (e.g., foreign keys).
+- **`RESTART IDENTITY`**: Optional; resets auto-increment sequences (PostgreSQL).
+- **`CONTINUE IDENTITY`**: Optional; keeps current sequence values (PostgreSQL).
+
+#### Key Points:
+1. **Purpose**: Quickly clears all data from a table without dropping it.
+2. **Faster than `DELETE`**: Minimal logging; resets auto-increment counters.
+3. **Dependencies**: Foreign keys may block without `CASCADE`.
+4. **Support**: Universal, with variations (e.g., PostgreSQL has `RESTART IDENTITY`).
+5. **vs. `DELETE`**: `DELETE` allows `WHERE`; `TRUNCATE` is faster but total.
+
+#### Subtopics (Clauses/Components):
+1. **`TRUNCATE TABLE table_name`**: Core truncation.
+2. **`CASCADE`**: Dependency handling.
+3. **`RESTART IDENTITY | CONTINUE IDENTITY`**: Sequence management.
+
+##### Subtopic 1: `TRUNCATE TABLE table_name`
+- **Purpose**: Specifies the table(s) to empty.
+- **Mandatory**: Yes.
+- **Keywords**: `TRUNCATE` (quick row removal), `TABLE` (object type).
+- **Example**:
+  ```sql
+  TRUNCATE TABLE employees;
+  ```
+  - Empties all rows from `employees`.
+
+##### Subtopic 2: `CASCADE`
+- **Purpose**: Handles foreign key dependencies.
+- **Mandatory**: No.
+- **Keywords**: `CASCADE` (propagate to child tables).
+- **Example**:
+  ```sql
+  TRUNCATE TABLE orders CASCADE;
+  ```
+  - Empties `orders` and dependent tables (e.g., `order_items`).
+
+##### Subtopic 3: `RESTART IDENTITY | CONTINUE IDENTITY`
+- **Purpose**: Controls auto-increment sequences.
+- **Mandatory**: No (default: `CONTINUE IDENTITY` in PostgreSQL).
+- **Keywords**: `RESTART` (reset sequences), `IDENTITY` (sequences); `CONTINUE` (keep current).
+- **Example**:
+  ```sql
+  TRUNCATE TABLE employees RESTART IDENTITY;
+  ```
+  - Empties `employees` and resets ID sequence to 1.
+
+#### Practical Use Case:
+Reset a log table:
+```sql
+TRUNCATE TABLE error_logs RESTART IDENTITY;
+```
+
+#### Notes:
+- **Performance**: Faster than `DELETE` for large tables; locks the table.
+- **Database Variations**:
+  - **PostgreSQL**: Supports `CASCADE`, `RESTART IDENTITY`.
+  - **MySQL**: `TRUNCATE TABLE employees;` (resets `AUTO_INCREMENT`).
+  - **SQL Server**: `TRUNCATE TABLE employees;` (resets `IDENTITY`).
+  - **Oracle**: `TRUNCATE TABLE employees DROP STORAGE;`.
+- **Safety**: Cannot use `WHERE`; all rows gone.
+
+This covers `TRUNCATE TABLE`. Say "next" for `CREATE TYPE`.
