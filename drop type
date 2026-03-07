@@ -1,0 +1,71 @@
+### SQL Command: `DROP TYPE`
+
+The `DROP TYPE` command removes a custom data type (e.g., ENUM or composite type) from the database. It’s a Data Definition Language (DDL) command that deletes the type definition, affecting any columns or functions using it.
+
+#### Syntax:
+```sql
+DROP TYPE [IF EXISTS] type_name [CASCADE | RESTRICT];
+```
+
+- **`type_name`**: The name of the type to drop.
+- **`IF EXISTS`**: Optional; skips error if the type doesn't exist.
+- **`CASCADE`**: Optional; drops dependent objects (e.g., columns using the type).
+- **`RESTRICT`**: Optional; fails if dependencies exist (default).
+
+#### Key Points:
+1. **Purpose**: Deletes a user-defined type created with `CREATE TYPE`.
+2. **Destructive**: Irreversible; affects tables/columns using the type.
+3. **Dependencies**: Columns, functions, or tables may block without `CASCADE`.
+4. **Support**: PostgreSQL, Oracle; SQL Server has limited user-defined types.
+
+#### Subtopics (Clauses/Components):
+1. **`DROP TYPE type_name`**: Core deletion.
+2. **`IF EXISTS`**: Error prevention.
+3. **`CASCADE | RESTRICT`**: Dependency handling.
+
+##### Subtopic 1: `DROP TYPE type_name`
+- **Purpose**: Specifies the type to delete.
+- **Mandatory**: Yes.
+- **Keywords**: `DROP` (remove object), `TYPE` (object type).
+- **Example**:
+  ```sql
+  DROP TYPE status;
+  ```
+  - Deletes the `status` type.
+
+##### Subtopic 2: `IF EXISTS`
+- **Purpose**: Avoids error if type doesn't exist.
+- **Mandatory**: No.
+- **Keywords**: `IF` (conditional), `EXISTS` (presence check).
+- **Example**:
+  ```sql
+  DROP TYPE IF EXISTS status;
+  ```
+  - Silent if `status` absent.
+
+##### Subtopic 3: `CASCADE | RESTRICT`
+- **Purpose**: Manages dependencies.
+- **Mandatory**: No (default: `RESTRICT`).
+- **Keywords**: `CASCADE` (drop dependents), `RESTRICT` (block if dependents).
+- **Example**:
+  ```sql
+  DROP TYPE status CASCADE;
+  ```
+  - Drops `status` and columns using it.
+
+#### Practical Use Case:
+Remove an obsolete type:
+```sql
+DROP TYPE IF EXISTS old_status CASCADE;
+```
+
+#### Notes:
+- **Dependencies**: Fails if type is used in tables/functions without `CASCADE`.
+- **Database Variations**:
+  - **PostgreSQL**: Full support for `CASCADE`/`RESTRICT`.
+  - **Oracle**: `DROP TYPE type_name FORCE;` (similar to `CASCADE`).
+  - **SQL Server**: Limited; uses `DROP TYPE` for user-defined types.
+  - **MySQL**: No custom types like ENUM in DDL.
+- **Safety**: Check usage first (e.g., `SELECT * FROM information_schema.columns WHERE data_type = 'status';`).
+
+This covers `DROP TYPE`. Say "next" for `GRANT`.
